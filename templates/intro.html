@@ -1,0 +1,148 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restro</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+      integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
+      crossorigin="anonymous"
+    />
+    <link rel="shortcut icon" href="{%static 'images/image13.jpg' %}" type="image/x-icon" />
+
+    <link rel="stylesheet" href="{%static 'css/intro.css' %}"/>
+  </head>
+  <body>
+    <section class="intro-card">
+      <header>
+        <nav>
+          <a href="javascript:void(0);" id="menu-bars" onclick="openNav()"
+          ><i class="fas fa-bars"></i
+        ></a>
+          <a href="#"><i class="fas fa-mobile"></i>Get an App</a>
+          <a href="#" id="bar">Add Restaurant</a>
+          <a href="login" id="bar">Login</a>
+          <a href="register" id="bar">Sign Up</a>
+
+        </nav>
+      </header>
+      <h1><i class="fas fa-utensils"></i>restro.</h1>
+      <p>Discover the best food and drinks near (city name)</p>
+
+      <div class="input-search">
+        <i class="fas fa-map-marker-alt" id="location"></i>
+        <input type="text" placeholder="Enter location" id="location-input" />
+        <div id="divider">|</div>
+        <i class="fas fa-search" id="search"></i>
+        <input
+          type="search"
+          class="search"
+          id="srch-input"
+          placeholder="Search Dishes"
+        />
+      </div>
+
+      <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="overlay-content">
+          <a href="login">Login</a>
+        <a href="#SIGNUP">SignUp</a>
+        <a href="#ADD_RESTURENT">Add Resturent</a>
+        </div>
+      </div>
+
+
+
+
+      <!-- <div id="navbar2">
+        
+      </div> -->
+
+    </section>
+    <section class="menu-type">
+      <div class="container">
+        <div class="card">
+          <div class="image">
+            <img href="login" src="{%static 'intro_images/intro2.jpg'%}" />
+            <div class="content">
+              <h1>Order food online</h1>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="image">
+            <img href="login" src="{%static 'intro_images/intro3.jpg'%}" />
+            <div class="content">
+              <h1>Go out for a meal</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="image">
+            <img href="login" src="{%static 'intro_images/intro4.jpg'%}" />
+            <div class="content">
+              <h1>Resto Pro</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="image">
+            <img  src="{%static 'intro_images/intro5.jpg'%}" />
+            <div class="content">
+              <h1>Night life</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <section class="footer">
+      <div class="box-container">
+        <div class="box">
+          <h3>locations</h3>
+          <a href="">india</a>
+          <a href="">USA</a>
+          <a href="">France</a>
+          <a href="">Germany</a>
+          <a href="">russia</a>
+        </div>
+
+        <div class="box">
+          <h3>quick links</h3>
+          <a href="">home</a>
+          <a href="">dishes</a>
+          <a href="">about</a>
+          <a href="">menu</a>
+          <a href="">review</a>
+        </div>
+
+        <div class="box">
+          <h3>contact info</h3>
+          <a href="">+91-9340015842</a>
+          <a href="">+999-888-555</a>
+          <a href="">restro743@gmail.com</a>
+        </div>
+
+        <div class="box">
+          <h3>follow us</h3>
+          <a href="">facebook</a>
+          <a href="">instagram</a>
+          <a href="">twitter</a>
+          <a href="">linkdin</a>
+        </div>
+      </div>
+      <div class="credit">Coyright @2021 by <span>ketan upadhyay</span></div>
+    </section>
+    
+<script src="{%static 'js/intro.js'%}"></script>
+  </body>
+</html>

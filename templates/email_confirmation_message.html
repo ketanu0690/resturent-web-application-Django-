@@ -1,0 +1,18 @@
+{% autoescape off %}
+
+
+please click on the link below to confirm your email address
+confirmation LINK :
+
+name = {{name}}
+uidb64={{uid}}
+domain = {{domain}}
+token = {{token}}
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+<!-- <a href="">Link</a> -->
+
+{% endautoescape %}
+
+
+
+
