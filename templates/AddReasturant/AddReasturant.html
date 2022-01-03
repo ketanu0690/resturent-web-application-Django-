@@ -1,0 +1,11 @@
+<h1>
+<form method="post" action="/Insertmenu" enctype="multipart/form-data">
+    {% csrf_token %}
+<input type="text" name="dish_name" placeholder="Name of Dish">
+<input type="text" name="dish_description" placeholder="Description of dish">
+<input type="file" name="dish_image" id="">
+<input type="text" name="dish_price" placeholder="price">
+<input type="text" name="dish_category" placeholder="category">
+<input type="submit" value="submit">
+</form>
+</h1>

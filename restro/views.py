@@ -1,6 +1,6 @@
 from django.http import HttpResponse 
 from django.shortcuts import render
-# from .cookies import *
+
 from restro import settings
 from django.core.mail import send_mail , EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,8 +12,12 @@ from .pool import connection
 
 
 def main(request):
-    print("came to amin")
-    return render(request,'main.html')
+    db,cmd = connection()
+    q="select * from menu"
+    MenuData = cmd.execute(q)    
+    db.commit()
+    print(MenuData)
+    return render(request,'main.html',{'MenuData':MenuData})
       
 
 def intro(request):
@@ -21,7 +25,7 @@ def intro(request):
 
 
 def register(request):
-    print("came into resistration ")
+    # print("came into resistration ")
     if request.method == 'POST':
         username = request.POST['username']
         firstname = request.POST['fname']
@@ -63,10 +67,8 @@ def register(request):
             send_mail(subject,message,from_email,to_list,fail_silently=True)
 
             #email address confirmation message
-
             current_site = get_current_site(request)
             subject = 'Email Confirmation'
-            # message = 'Hello'+firstname+'\n\n'+'Thank you for registering with us'+'\n\n'+'Please click on the link to activate your account'
             message2= render_to_string('email_confirmation_message.html',{
                 'name':firstname,
                 'domain':current_site.domain,
@@ -80,7 +82,7 @@ def register(request):
             email = EmailMessage(subject,message2,from_email,to_list)
             email.fail_silently=True
             email.send()
-            # send_mail(subject,message,from_email,to_list,fail_silently=True)
+           
 
             return render(request,'GO_TO_EMAIL.html',{'success':'Registerd Successfully'})
             
@@ -88,64 +90,71 @@ def register(request):
 
 
 def LOGIN_check(request):
+# fetching cookies from user to auto login 
+    db,cmd = connection()
     username = request.COOKIES.get('CookiesUsername')  
     password = request.COOKIES.get('CookiesPassword')
     
-    # print(username,password)
-    db,cmd = connection()
+    #checking user has logout or not 
     q="select login_check from restro_db.user_table where username='{0}' and password ='{1}'".format(username,password)
     cmd.execute(q)
     user=cmd.fetchone()
-    db.commit()
     print(user)
+    db.commit()
     
     if user[0] == "False":
-        # print('idharr he a raha hai ')
         return render(request,'intro.html')
     if username is  None and password is None:
         return render(request,'intro.html')    
-    else:    
-        db,cmd = connection()
+    else: 
+
         q="select * from user_table where username='{0}' and password ='{1}'".format(username,password)
         cmd.execute(q)
         user=cmd.fetchone()
         db.commit()
-        print(user)
-        if user is not None:
-            # print("came here")
-            fname = user[1]
-            # print(fname)
-            db.close()
+        
 
+        if user is not None:
+            fname = user[1]
+            q="select * from menu"
+            cmd.execute(q)    
+            MenuData = cmd.fetchall()
+
+            db.commit()
+            print(MenuData)
+            db.close()
+ 
+            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData})
            
-            return render(request,'main.html',{'fname':fname,'username':username,'password':password})
 
 def login(request):
-    # print("came into login ")
+    db,cmd = connection()
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['pass']
-        db,cmd = connection()
-    
+
+        # checking user is present or not
         q="select * from user_table where username='{0}' and password ='{1}'".format(username,password)
-        
         cmd.execute(q)
         user=cmd.fetchone()
         db.commit()
-        print(user)
         
         if user is not None:
-            # print("came here")
-            db,cmd = connection()
+            # set login check to true
+           
             q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(username)
             cmd.execute(q)
             db.commit()
             fname = user[1]
-            # print(fname)
+            # to fetch menu data
+            q="select * from menu"
+            MenuData = cmd.execute(q) 
+            MenuData = cmd.fetchall()   
+            db.commit()
             db.close()
+            
 
-           
-            return render(request,'main.html',{'fname':fname,'username':username,'password':password})
+            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData})
         else:
             return render(request,'LOGIN.html',{'error':'Invalid Credentials'})
 
@@ -158,17 +167,10 @@ def logout(request, username):
     db.commit()
     db.close()
 
-    return render(request,'intro.html')
-def scookie(request):  
-    html = HttpResponse("<h1>Welcome to TechVidvan Employee Portal</h1>")
-    html.set_cookie('TechVidvan', 'We are setting a cookie', max_age = None)
-    return html
-def gcookie(request):  
-    tutorial  = request.COOKIES['java-tutorial']  
-    return HttpResponse("java tutorials @: "+  tutorial);     
+    return render(request,'intro.html')    
 
 def activate(request, uidb64, token):
-
+# activating the account on email check
     try:
         print("came here")
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -177,11 +179,9 @@ def activate(request, uidb64, token):
         cmd.execute(q)
         user=cmd.fetchone()
         db.commit()
-        # print(user)
-        # print(user[0])
-        # print("tokennnnnnnnnnnnnnnnnnn",gentrate_token.check_token(user[0],token))
+       
     except(TypeError, ValueError, OverflowError, user.DoesNotExist):
-        # print("eeeeeeeeeeeeeeeeeeeeeeeerrorrrrrrrrrrrrr")
+      
         user = None
     if user is not None and gentrate_token.check_token(user[0],token):
         print("came here")
@@ -190,38 +190,36 @@ def activate(request, uidb64, token):
         cmd.execute(q)
         db.commit()
         db.close()
-        # print("problem with cookies ")
-        # value = "admin1"
-        # setcookie(value)
+    
         print("no problem with cookies ")
         return render(request,'main.html',{'success':'Account Activated','username':uid})
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+      
     else:
-        # print("errorrrrrrrrrrrrrrrrrrrrrrrrrrrr")
+     
         return HttpResponse('Activation link is invalid!')
 
 
 
 def order(request):
+    # to fetch data from order tabel and send to order.html
     if request.method == 'POST':
         db,cmd = connection()
         q="select * from restro_db.order_table"
         cmd.execute(q)
         order=cmd.fetchall()
         db.commit()
-        # print(order)
         db.close()
         return render(request,'order.html',{'order':order})
     return render(request,'order.html')
 
 def MenuItems(request):
+    # to fetch data from menu tabel and send to menu.html
     if request.method == 'POST':
         db,cmd = connection()
         q="select * from restro_db.menu_table"
         cmd.execute(q)
         menu=cmd.fetchall()
         db.commit()
-        # print(menu)
         db.close()
         return render(request,'menu.html',{'menu':menu})
     return render(request,'menu.html')    

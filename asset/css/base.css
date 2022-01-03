@@ -1,0 +1,204 @@
+:root {
+    --green: #0edb64;
+    --black: #19191a;
+    --white: #fff;
+    --light-color: rgb(12, 12, 12);
+    --grey: #eee;
+    --box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+    --another: rgba(0, 0, 0, 0.8);
+  }
+  
+  
+  /* this fuction will enabel dark theme */
+  .dark-theme{
+      --black:#fff;
+      --white:#19191a;
+      --light-color:#fff;
+      --grey:#6e6e70; 
+      --another:#fff;
+      --box-shadow:0 .5rem 1.5rem rgba(240, 240, 240, 0.719);
+  }
+  
+  
+  
+  
+  * {
+    font-family: "Nunito", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    text-transform: capitalize;
+    transition: all 0.2s linear;
+  }
+  
+  html {
+    font-size: 62.5%;
+    overflow-x: hidden;
+    scroll-padding-top: 5.5rem;
+    scroll-behavior: smooth;
+
+  }
+  
+  section {
+    padding: 2rem 9%;
+  }
+  
+/* intro card */
+
+.intro-card{
+    background-image: url('AddResturent.jpg');
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content:end;
+    height: 50rem;
+    width: 100%;
+
+
+}  
+
+.intro-card .input-search{
+  display: flex;
+  flex-direction: row;
+  background-color: #fff;
+  border-radius: 1.5rem;
+  height: 5.4rem;
+  width: 100%;
+}
+
+.intro-card .input-search #location{
+  color: red;
+}
+
+.intro-card .input-search i{
+  font-size:1.5rem;
+  position: relative;
+  top: 2.5rem;
+}
+
+.intro-card .search::placeholder{
+  /* text-align: center; */
+  width: 100%;
+  color:grey;
+}
+
+#location{
+  flex: 1 1 5rem;
+}
+#location-input{
+  flex: 2 3 10rem;
+}
+#divider{
+  flex: 3 2 10rem;
+  font-size: 3rem;
+  color: #6e6e70;
+}
+#search{
+  flex: 3 1 2rem;
+}
+#srch-input{
+  flex: 5 4 90rem;
+margin: 1rem;
+}
+
+.intro-card h1{
+  font-size:6rem;
+}
+.intro-card h1 i{
+  color: var(--green);
+}
+
+.intro-card p{
+  font-size:2.5rem;
+  color: var(--white);
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background:rgba(0, 0, 0, 0.2);
+  padding: 1rem 7%;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  z-index: 1000;
+  box-shadow: var(--box-shadow);
+  overflow-x: hidden;
+  overflow-y: none;
+}
+header nav a{
+  text-decoration: none;
+  color: var(--white);
+  font-size: larger;
+  margin: 3rem;
+
+}
+
+
+
+/* mobile navbar */
+
+
+
+#menu-bars{
+  display: none;
+}
+
+
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: rgb(255, 255, 255);
+  background-color: rgb(255, 254, 254);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+  font-size: 40px;
+  top: 15px;
+  right: 35px;
+  }
+}

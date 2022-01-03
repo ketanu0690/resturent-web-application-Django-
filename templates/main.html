@@ -125,17 +125,21 @@
 
     <br /><br /><br />
 
+  
     <section class="dishes" id="dishes">
       <h3 class="sub-heading">our dishes</h3>
       <h1 class="heading">populor dishes</h1>
       <div class="box-container">
 
-        <!-- {% for i in menuData %} -->
+
+
+        {% for y in MenuData %}
+
         <div class="box">
           <a href="" class="fas fa-heart"></a>
           <a href="" class="fas fa-eye"></a>
-          <img src="{%static 'images\image10.jpg'%}" alt="" />
-          <h3>tasty food</h3>
+          <img src="static/{{y.3}}" alt="ketan" />
+          <h3>{{y.1}}</h3>
           <div class="stars">
             <i class="fas fa-star"></i>
             <i class="fas fa-star"></i>
@@ -143,12 +147,14 @@
             <i class="fas fa-star"></i>
             <i class="fas fa-star-half-alt"></i>
           </div>
-          <span>$15.99</span>
+          <span>${{y.4}}</span>
           <a href="order" class="btn">order Now</a>
         </div>
-        <!-- endfor -->
 
-        <div class="box">
+        {% endfor %}
+        
+
+        <!-- <div class="box">
           <a href="" class="fas fa-heart"></a>
 
           <a href="" class="fas fa-eye"></a>
@@ -232,7 +238,7 @@
           <span>$15.99</span>
           <a href="#" class="btn">add to cart</a>
         </div>
-      </div>
+      </div> -->
     </section>
 
     <section class="about" id="about">
@@ -578,10 +584,51 @@
           prevEl: ".swiper-button-prev",
         },
       });
-
+//setting username and password
 
       document.cookie = "CookiesUsername={{username}}; expires=Thu, 18 Dec 2022 12:00:00 UTC";
       document.cookie = "CookiesPassword={{password}}; expires=Thu, 18 Dec 2022 12:00:00 UTC";
+
+
+
+
+
+//   fetching geo location of user
+const successfulLookup = position => {
+  const { latitude, longitude } = position.coords;
+  fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=17e544a03ad94875ab50800e5344585a`)
+    .then(response => response.json())
+    .then(data => {
+
+      const { country_code, country, region, city } = data.results[0].components;
+      const { latitude, longitude } = data.results[0].geometry;
+      const { formatted } = data.results[0].annotations;
+      const { name } = data.results[0].annotations.timezone;
+      const { offset } = data.results[0].annotations.timezone;
+      const { timezone } = data.results[0].annotations;
+      //const { country_code } = data.results[0].components;
+      console.log(country_code);
+      console.log(city);
+      console.log(name);
+      //console.log(offset);
+      console.log(timezone);
+      //console.log(formatted);
+      console.log(country);
+     // console.log(region);
+     // console.log(latitude);
+      //console.log(longitude);
+     // document.cookie = `CookiesCountry=${country_code}; expires=Thu, 18 Dec 2022 12:00:00 UTC`;
+     
+    });
+}
+      if (window.navigator.geolocation) {
+        window.navigator.geolocation.getCurrentPosition(successfulLookup,console.log);
+      }
+
+
+        // Geolocation available
+         
+
 
     </script>
 
