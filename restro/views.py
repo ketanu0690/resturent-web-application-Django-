@@ -1,6 +1,6 @@
-from django.http import HttpResponse 
-from django.shortcuts import render
-
+from django.http import HttpResponse ,JsonResponse
+from django.shortcuts import render,redirect
+import json
 from restro import settings
 from django.core.mail import send_mail , EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,12 +12,14 @@ from .pool import connection
 
 
 def main(request):
-    db,cmd = connection()
-    q="select * from menu"
-    MenuData = cmd.execute(q)    
-    db.commit()
-    print(MenuData)
-    return render(request,'main.html',{'MenuData':MenuData})
+    # db,cmd = connection()
+    # q="select * from menu"
+    # MenuData = cmd.execute(q)    
+    # db.commit()
+    # print(MenuData)
+    # return render(request,'main.html',{'MenuData':MenuData})
+    response = redirect('/')
+    return response
       
 
 def intro(request):
@@ -99,7 +101,7 @@ def LOGIN_check(request):
     q="select login_check from restro_db.user_table where username='{0}' and password ='{1}'".format(username,password)
     cmd.execute(q)
     user=cmd.fetchone()
-    print(user)
+
     db.commit()
     
     if user[0] == "False":
@@ -121,7 +123,7 @@ def LOGIN_check(request):
             MenuData = cmd.fetchall()
 
             db.commit()
-            print(MenuData)
+        
             db.close()
  
             return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData})
@@ -167,7 +169,8 @@ def logout(request, username):
     db.commit()
     db.close()
 
-    return render(request,'intro.html')    
+    response = redirect('/')
+    return response
 
 def activate(request, uidb64, token):
 # activating the account on email check
@@ -191,7 +194,7 @@ def activate(request, uidb64, token):
         db.commit()
         db.close()
     
-        print("no problem with cookies ")
+        # print("no problem with cookies ")
         return render(request,'main.html',{'success':'Account Activated','username':uid})
       
     else:
@@ -200,7 +203,7 @@ def activate(request, uidb64, token):
 
 
 
-def order(request):
+def order(request, orderId):
     # to fetch data from order tabel and send to order.html
     if request.method == 'POST':
         db,cmd = connection()
@@ -210,7 +213,8 @@ def order(request):
         db.commit()
         db.close()
         return render(request,'order.html',{'order':order})
-    return render(request,'order.html')
+
+    return render(request,'AddReasturant/order.html',{'orderId':orderId})
 
 def MenuItems(request):
     # to fetch data from menu tabel and send to menu.html
@@ -224,7 +228,24 @@ def MenuItems(request):
         return render(request,'menu.html',{'menu':menu})
     return render(request,'menu.html')    
 
+def ViewProducts(request, orderId):
+    return render(request,'ViewProduct.html',{'orderId':orderId})
 
+def updatecart(request):
+    data  = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    
+    print("productId :",productId,"action :",action)
+    
+    return JsonResponse("updated item",safe=False)
+
+
+def AddToCart(request):
+    return render(request,'AddToCart.html')    
+
+def CheckOut(request):
+    return render(request,'CheckOut.html')    
     
 
 

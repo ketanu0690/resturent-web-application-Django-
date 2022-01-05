@@ -1,0 +1,66 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="{% static 'css/AddtoCart.css' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <div class="shopping-cart">
+        <!-- Title -->
+        <div class="title">
+            <a href="{% url 'Home' %} "  ><i class="uil uil-arrow-left"></i>Continue Shopping </a>
+            <a>Shopping Bag</a>
+            <a href="{% url 'CheckOut' %}" >checkout<i class="uil uil-arrow-right"></i></a>
+        </div>
+
+        <!-- Product #1 -->
+        <div class="item">
+            <div class="buttons">
+                <i class="uil uil-multiply"></i>
+                <i class="uil uil-heart"></i>
+            </div>
+
+            <div class="image">
+                <img src="item-1.png" alt="" />
+            </div>
+
+            <div class="description">
+                <span>Common Projects</span>
+                <span>Bball High</span>
+                <span>White</span>
+            </div>
+
+            <div class="quantity">
+                <button class="plus-btn" type="button" name="button">
+                    <i class="uil uil-plus-circle"></i>
+                </button>
+                <input type="text" name="name" value="1">
+                <button class="minus-btn" type="button" name="button">
+                    <i class="uil uil-minus-circle"></i>
+                </button>
+            </div>
+
+            <div class="total-price">$549</div>
+        </div>
+       
+    </div>
+      
+
+        <script>
+            $('.like-btn').on('click', function () {
+                $(this).toggleClass('is-active');
+            });
+        </script>
+
+</body>
+
+</html>

@@ -10,8 +10,8 @@ document.querySelector("#close").onclick = () => {
 //   for menu bar
 menuBar = () => {
   var x = document.querySelector("#navbar2");
-  console.log(x);
-  console.log("came here");
+  // console.log(x);
+  // console.log("came here");
   if (x.style.display === "flex") {
     x.style.display = "none";
   } else {
@@ -29,7 +29,7 @@ dark.onclick = function (x) {
 
 //  preloader 
 $(document).ready(function() {
-  console.log("preloder");
+  // console.log("preloder");
   preloaderFadeOutTime = 500;
   function hidePreloader() {
   var preloader = $('.spinner-wrapper');
@@ -38,6 +38,48 @@ $(document).ready(function() {
   hidePreloader();
   });
 
+
+  //Add to cart option
+
+
+  function updateUserOrder(productId,action){
+    console.log("user is logged in ")
+    var url = '/updatecart'
+  
+    fetch(url,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-CSRFToken':csrftoken,
+      },
+      body:JSON.stringify({'productId':productId, 'action':action})
+      
+  })
+  .then((response)=>{
+    return response.json()
+  })
+  .then((data)=>{
+    
+    console.log('data',data)
+  })
+  
+  }
+
+  var updateBtns = document.getElementsByClassName('update-cart')
+  for (var i=0;i<updateBtns.length;i++){
+    updateBtns[i].addEventListener('click',function(){
+      var productId = this.dataset.product
+      var action = this.dataset.action
+      console.log('ProductId',productId,'action',action)
+updateUserOrder(productId,action)
+
+    })
+  }
+
+
+
+
+  // console.log("cart added");
 
 // error:-
 // menu do not go away on resizeing the screen 
