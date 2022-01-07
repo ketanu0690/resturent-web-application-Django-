@@ -18,7 +18,7 @@ urlpatterns = [
     # path('',include('chat.urls')),
     path('updatecart',views.updatecart,name='updatecart'),
     path('ViewProducts<orderId>',views.ViewProducts,name='ViewProducts'),
-    path('AddToCart',views.AddToCart,name='AddToCart'),
+    path('AddToCart<username>',views.AddToCart,name='AddToCart'),
     # path('RemoveFromCart<orderId>',views.RemoveFromCart,name='RemoveFromCart'),
     path('CheckOut',views.CheckOut,name='CheckOut'),
 

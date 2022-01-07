@@ -16,6 +16,7 @@
     <link rel="shortcut icon" href="{%static 'images/image13.jpg' %}" type="image/x-icon" />
 
     <link rel="stylesheet" href="{%static 'css/intro.css' %}"/>
+
   </head>
   <body>
     <section class="intro-card">
@@ -32,7 +33,7 @@
         </nav>
       </header>
       <h1><i class="fas fa-utensils"></i>restro.</h1>
-      <p>Discover the best food and drinks near (city name)</p>
+      <p>Discover the best food and drinks near <h1 id="city"></h1></p>
 
       <div class="input-search">
         <i class="fas fa-map-marker-alt" id="location"></i>
@@ -136,6 +137,41 @@
       </div>
       <div class="credit">Coyright @2021 by <span>ketan upadhyay</span></div>
     </section>
+
+    <script>
+      //   fetching geo location of user
+const successfulLookup = position => {
+  const { latitude, longitude } = position.coords;
+  fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=17e544a03ad94875ab50800e5344585a`)
+    .then(response => response.json())
+    .then(data => {
+
+      const { country_code, country, region, city } = data.results[0].components;
+      const { latitude, longitude } = data.results[0].geometry;
+      const { formatted } = data.results[0].annotations;
+      const { name } = data.results[0].annotations.timezone;
+      const { offset } = data.results[0].annotations.timezone;
+      const { timezone } = data.results[0].annotations;
+      console.log(country_code);
+      console.log(city);
+      console.log(name);
+      console.log(timezone);
+      console.log(country);
+
+      document.cookie = `CookiesCity=${city}; expires=Thu, 18 Dec 2022 12:00:00 UTC`;
+      document.getElementById("city").innerHTML = city;
+
+
+     
+    });
+}
+      if (window.navigator.geolocation) {
+        window.navigator.geolocation.getCurrentPosition(successfulLookup,console.log);
+      }
+
+
+        // Geolocation available
+    </script>
     
 <script src="{%static 'js/intro.js'%}"></script>
   </body>

@@ -17,49 +17,67 @@
     <div class="shopping-cart">
         <!-- Title -->
         <div class="title">
-            <a href="{% url 'Home' %} "  ><i class="uil uil-arrow-left"></i>Continue Shopping </a>
+            <a href="{% url 'Home' %} "><i class="uil uil-arrow-left"></i>Continue Shopping </a>
             <a>Shopping Bag</a>
-            <a href="{% url 'CheckOut' %}" >checkout<i class="uil uil-arrow-right"></i></a>
+            <a href="{% url 'CheckOut' %}" id="checkout">checkout<i class="uil uil-arrow-right"></i></a>
+            <a>Total Amount: {{total}} Rs.</a>
+
         </div>
 
-        <!-- Product #1 -->
-        <div class="item">
-            <div class="buttons">
-                <i class="uil uil-multiply"></i>
-                <i class="uil uil-heart"></i>
+        
+        <div class="product">
+            <!-- items -->
+            <div class="item">
+            {%for y in menu %}
+            <div id="container">
+                <div class="image">
+                <img src="static/{{y.0.3}}" alt="ketan" />
             </div>
-
-            <div class="image">
-                <img src="item-1.png" alt="" />
-            </div>
-
             <div class="description">
-                <span>Common Projects</span>
-                <span>Bball High</span>
-                <span>White</span>
+                <span>{{y.0.1}}</span>
+                <span>{{y.0.2}}</span>
             </div>
-
-            <div class="quantity">
-                <button class="plus-btn" type="button" name="button">
-                    <i class="uil uil-plus-circle"></i>
-                </button>
-                <input type="text" name="name" value="1">
-                <button class="minus-btn" type="button" name="button">
-                    <i class="uil uil-minus-circle"></i>
-                </button>
-            </div>
-
-            <div class="total-price">$549</div>
         </div>
-       
-    </div>
-      
+                
+            
+            {% endfor %}
+        </div>
+            <!-- item quantity -->
+            <div class="quantity">
+            {% for x in quantity %}
+            <div id="container">
+                <div id="button_qnt">
+                    <button class="plus-btn" type="button" name="button">
+                        <i class="uil uil-plus-circle"></i>
+                    </button>
+                    <input type="text"  id="input_qnt" name="name" value="{{x}}" disabled>
+                    <button class="minus-btn" type="button" name="button">
+                        <i class="uil uil-minus-circle"></i>
+                    </button>
+                </div>
+                
+            </div>
+                
+            {% endfor %}
+        </div>
+            <!-- total price -->
+            <div class="price">
+            {% for z in amt %}
+            <div id="container">
+                <div id="price_bnt">
+                     <div class="total-price"> {{z}} Rs.</div>
+                <div class="remove-item">
+                    <i class="uil uil-trash-alt"></i>
+                </div>
+            </div>
+               
+            </div>
+                
+            
+            {% endfor %}
+        </div>
 
-        <script>
-            $('.like-btn').on('click', function () {
-                $(this).toggleClass('is-active');
-            });
-        </script>
+        </div>
 
 </body>
 

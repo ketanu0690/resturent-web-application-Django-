@@ -42,8 +42,8 @@ $(document).ready(function() {
   //Add to cart option
 
 
-  function updateUserOrder(productId,action){
-    console.log("user is logged in ")
+  function updateUserOrder(productId,action,username){
+    // console.log("user is logged in ")
     var url = '/updatecart'
   
     fetch(url,{
@@ -52,7 +52,7 @@ $(document).ready(function() {
         'Content-Type':'application/json',
         'X-CSRFToken':csrftoken,
       },
-      body:JSON.stringify({'productId':productId, 'action':action})
+      body:JSON.stringify({'productId':productId, 'action':action, 'username':username})
       
   })
   .then((response)=>{
@@ -70,8 +70,10 @@ $(document).ready(function() {
     updateBtns[i].addEventListener('click',function(){
       var productId = this.dataset.product
       var action = this.dataset.action
-      console.log('ProductId',productId,'action',action)
-updateUserOrder(productId,action)
+      var username = this.dataset.username
+      // console.log("username here",username)
+      // console.log('ProductId',productId,'action',action,'username',username)
+updateUserOrder(productId,action,username)
 
     })
   }

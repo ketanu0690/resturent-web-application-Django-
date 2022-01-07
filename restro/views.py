@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import HttpResponse ,JsonResponse
 from django.shortcuts import render,redirect
 import json
@@ -12,12 +13,7 @@ from .pool import connection
 
 
 def main(request):
-    # db,cmd = connection()
-    # q="select * from menu"
-    # MenuData = cmd.execute(q)    
-    # db.commit()
-    # print(MenuData)
-    # return render(request,'main.html',{'MenuData':MenuData})
+  
     response = redirect('/')
     return response
       
@@ -28,6 +24,7 @@ def intro(request):
 
 def register(request):
     # print("came into resistration ")
+    db,cmd = connection()
     if request.method == 'POST':
         username = request.POST['username']
         firstname = request.POST['fname']
@@ -36,8 +33,10 @@ def register(request):
         password = request.POST['pass']
         confirmpassword = request.POST['c_pass']
         login_check = False
+        uid =urlsafe_base64_encode(force_bytes(username))
+        city= request.COOKIES.get('CookiesCity') 
 
-        db,cmd = connection()
+        
         q="select * from user_table where username='{0}' or email ='{1}'".format(username,email)
         cmd.execute(q)
         user=cmd.fetchone()
@@ -56,7 +55,8 @@ def register(request):
     
         else:
             db,cmd = connection()
-            q="INSERT INTO restro_db.user_table (username, first_name, last_name, password, email,login_check) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}');".format(username,firstname,lastname,password,email,login_check)
+            # q="INSERT INTO restro_db.user_table (uid, username, first_name, last_name, password, email, login_check, city`) VALUES ('yure', 'hhhj', 'jhvkh', 'hkjh', '78', 'ketanup@gm.com', 'false', 'gwal');"
+            q="INSERT INTO restro_db.user_table (uid,username,first_name, last_name, password, email,login_check,city) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}','{7}');".format(uid,username,firstname,lastname,password,email,login_check,city)
             cmd.execute(q)
             db.commit()
             db.close()
@@ -231,18 +231,126 @@ def MenuItems(request):
 def ViewProducts(request, orderId):
     return render(request,'ViewProduct.html',{'orderId':orderId})
 
+
+
+def AddToCart(request, username):
+    db,cmd = connection()
+    q="select uid from user_table where username='{0}'".format(username)
+    cmd.execute(q)
+    uid = cmd.fetchall()
+    db.commit()
+    
+
+    q2="select order_id from restro_db.order where uid='{0}'".format(uid[0][0])
+    cmd.execute(q2)
+    order_id = cmd.fetchall()
+    
+    db.commit()
+
+    q3="select menu_id, quantity from restro_db.order_item where order_id={0}".format(order_id[0][0])
+    cmd.execute(q3)
+    order_item = cmd.fetchall()
+    
+    db.commit()
+    menu_item = []
+    for i in order_item:
+        q4="select * from restro_db.menu where menu_id={0}".format(i[0])
+        cmd.execute(q4)
+        menu_item.append(cmd.fetchall())
+        db.commit()
+    
+   
+    quantity = []
+    for x in order_item:
+       
+        quantity.append(int(x[1]))
+    print(quantity)    
+  
+
+    amt = []
+    # print(len(menu_item))
+    for i in range(0,len(menu_item)):
+        amt.append(quantity[i]*menu_item[i][0][4])
+    
+    total = sum(amt)
+      
+
+    db.close()
+    return render(request,'AddToCart.html',{'menu':menu_item,'quantity':quantity,'amt':amt,'total':total})   
+
 def updatecart(request):
+    db,cmd = connection()
     data  = json.loads(request.body)
-    productId = data['productId']
+    menuId = data['productId']
     action = data['action']
+    username = data['username']
+
+    q1="select uid from user_table where username='{0}'".format(username)
+    cmd.execute(q1)
+    uid = cmd.fetchone()
+    db.commit()
+    print(uid)
+
+    transaction_id = urlsafe_base64_encode(force_bytes(action+str(uid[0])))
+    date = datetime.now()
+    false= False
     
-    print("productId :",productId,"action :",action)
+    find = "select order_id from restro_db.order where uid='{0}'".format(uid[0])
+    cmd.execute(find)
+    user = cmd.fetchone()
+    print("useeeeeeeeeeeeeeeeeeeer",user)
+    db.commit()
+    # this is to check if user is already present in order table or not
+    if user is None:
+        # if not present then insert into order table
+        q2= "INSERT INTO restro_db.order ( transaction_id,uid,order_date,complete) VALUES ('{0}','{1}','{2}','{3}')".format(transaction_id,uid[0],date,false)
+        cmd.execute(q2)
+        db.commit()
+        # to fetch order_id from order table
+        q3 = "select order_id from restro_db.order where uid='{0}'".format(uid[0])
+        cmd.execute(q3)
+        order_id = cmd.fetchone()
+        db.commit()
+        # to set itmes in order_item table
+        q4 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(order_id[0],menuId,1)
+        cmd.execute(q4)
+        db.commit()
+        
+    else:
+        # if present then update order_item table
+        # this is to check if item is already present in order_item table or not
+        print("came into else part")
+        print(user[0])
+        f = "select menu_id from restro_db.order_item where order_id= {0} ".format(user[0])
+        cmd.execute(f)
+        findmenu_id = cmd.fetchall()
+        
+        db.commit()
+        if findmenu_id is None:
+            print("cameeeeeee")
+            q5 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(user[0],menuId,1)
+            cmd.execute(q5)
+            db.commit()
+        else:
+       
+            for i in findmenu_id:
+                
+                menuId = int(menuId)
+                if i[0] == menuId:
+                    
+                    q6 = "update restro_db.order_item set quantity = quantity+1 where order_id = '{0}' and menu_id = '{1}'".format(user[0],menuId)
+                    cmd.execute(q6)
+                    db.commit()
+                    break
+            else:
+                q7 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(user[0],menuId,1)
+                cmd.execute(q7)
+                db.commit()
     
+    db.close()
+
     return JsonResponse("updated item",safe=False)
 
-
-def AddToCart(request):
-    return render(request,'AddToCart.html')    
 
 def CheckOut(request):
     return render(request,'CheckOut.html')    
