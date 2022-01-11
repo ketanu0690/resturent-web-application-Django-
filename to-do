@@ -3,8 +3,13 @@ add github login
 add google pop up login like geeksforgeeks
 add  real time chat bot
 add explore option like instagram 
-edit main.html
-Problem with logout  
+edit main.html(done)
+Problem with logout (done) 
 in main .html contact now in place of order now and replace add to cart to order now
 change view of ccookies because any one can see username and password from cookies 
 edit most like dish in heart 
+add search option in main.html
+add recipe in main.html
+add video section in main.html
+Make a admin dash board to add resturnet and delete dish
+add admin login

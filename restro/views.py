@@ -13,7 +13,6 @@ from .pool import connection
 
 
 def main(request):
-  
     response = redirect('/')
     return response
       
@@ -121,12 +120,23 @@ def LOGIN_check(request):
             q="select * from menu"
             cmd.execute(q)    
             MenuData = cmd.fetchall()
-
             db.commit()
-        
+
+            q="select quantity from order_item "
+            cmd.execute(q)
+            order_item = cmd.fetchall()
+            db.commit()
+            # to find sum of quantity of all order items
+            sum_quantity = 0
+            for i in order_item:
+                sum_quantity = sum_quantity + i[0]
+            print(sum_quantity)
+    
+
+
             db.close()
  
-            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData})
+            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
            
 
 def login(request):
@@ -150,13 +160,22 @@ def login(request):
             fname = user[1]
             # to fetch menu data
             q="select * from menu"
-            MenuData = cmd.execute(q) 
+            cmd.execute(q) 
             MenuData = cmd.fetchall()   
             db.commit()
+
+            q="select quantity from order_item "
+            cmd.execute(q)
+            order_item = cmd.fetchall()
+            db.commit()
+            sum_quantity = 0
+            for i in order_item:
+                sum_quantity = sum_quantity + i[0]
+            # print(sum_quantity)
             db.close()
             
 
-            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData})
+            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
         else:
             return render(request,'LOGIN.html',{'error':'Invalid Credentials'})
 
@@ -175,7 +194,7 @@ def logout(request, username):
 def activate(request, uidb64, token):
 # activating the account on email check
     try:
-        print("came here")
+        # print("came here")
         uid = force_text(urlsafe_base64_decode(uidb64))
         db,cmd = connection()
         q="select * from user_table where username='{0}'".format(uid)
@@ -187,7 +206,7 @@ def activate(request, uidb64, token):
       
         user = None
     if user is not None and gentrate_token.check_token(user[0],token):
-        print("came here")
+        # print("came here")
         db,cmd = connection()
         q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(uid)
         cmd.execute(q)
@@ -218,6 +237,7 @@ def order(request, orderId):
 
 def MenuItems(request):
     # to fetch data from menu tabel and send to menu.html
+    # this is comming from adimin ppage 
     if request.method == 'POST':
         db,cmd = connection()
         q="select * from restro_db.menu_table"
@@ -240,18 +260,16 @@ def AddToCart(request, username):
     uid = cmd.fetchall()
     db.commit()
     
-
     q2="select order_id from restro_db.order where uid='{0}'".format(uid[0][0])
     cmd.execute(q2)
     order_id = cmd.fetchall()
-    
     db.commit()
 
     q3="select menu_id, quantity from restro_db.order_item where order_id={0}".format(order_id[0][0])
     cmd.execute(q3)
     order_item = cmd.fetchall()
-    
     db.commit()
+
     menu_item = []
     for i in order_item:
         q4="select * from restro_db.menu where menu_id={0}".format(i[0])
@@ -259,106 +277,227 @@ def AddToCart(request, username):
         menu_item.append(cmd.fetchall())
         db.commit()
     
-   
     quantity = []
     for x in order_item:
-       
+        if x[1]<0:
+            continue        
         quantity.append(int(x[1]))
-    print(quantity)    
-  
 
     amt = []
-    # print(len(menu_item))
-    for i in range(0,len(menu_item)):
+    # print(menu_item[0][0][4])
+    # print(quantity)
+    for i in range(len(menu_item)):
         amt.append(quantity[i]*menu_item[i][0][4])
-    
+    # print(amt)
+      
     total = sum(amt)
       
 
     db.close()
-    return render(request,'AddToCart.html',{'menu':menu_item,'quantity':quantity,'amt':amt,'total':total})   
+    return render(request,'AddToCart.html',{'menu':menu_item,'quantity':quantity,'amt':amt,'total':total,'username':username})   
 
 def updatecart(request):
     db,cmd = connection()
-    data  = json.loads(request.body)
-    menuId = data['productId']
-    action = data['action']
-    username = data['username']
 
+    data  = json.loads(request.body)
+  
+    menuId = data['productId']
+    
+    action = data['action']
+    
+    username = data['username']
+    
     q1="select uid from user_table where username='{0}'".format(username)
     cmd.execute(q1)
     uid = cmd.fetchone()
     db.commit()
-    print(uid)
+    
+    if uid is None:
+        uid = " "
 
     transaction_id = urlsafe_base64_encode(force_bytes(action+str(uid[0])))
     date = datetime.now()
+    print(date)
     false= False
     
     find = "select order_id from restro_db.order where uid='{0}'".format(uid[0])
     cmd.execute(find)
     user = cmd.fetchone()
-    print("useeeeeeeeeeeeeeeeeeeer",user)
+    # print(user)
+
     db.commit()
+
+    if action == 'add':
     # this is to check if user is already present in order table or not
-    if user is None:
+        if user is None:
         # if not present then insert into order table
-        q2= "INSERT INTO restro_db.order ( transaction_id,uid,order_date,complete) VALUES ('{0}','{1}','{2}','{3}')".format(transaction_id,uid[0],date,false)
-        cmd.execute(q2)
-        db.commit()
+            q2= "INSERT INTO restro_db.order (transaction_id,uid,order_date,complete) VALUES ('{0}','{1}','{2}','{3}')".format(transaction_id,uid[0],date,false)
+            cmd.execute(q2)
+            db.commit()
         # to fetch order_id from order table
-        q3 = "select order_id from restro_db.order where uid='{0}'".format(uid[0])
-        cmd.execute(q3)
-        order_id = cmd.fetchone()
-        db.commit()
+            q3 = "select order_id from restro_db.order where uid='{0}'".format(uid[0])
+            cmd.execute(q3)
+            order_id = cmd.fetchone()
+            db.commit()
         # to set itmes in order_item table
-        q4 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(order_id[0],menuId,1)
-        cmd.execute(q4)
-        db.commit()
+            q4 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(order_id[0],menuId,1)
+            cmd.execute(q4)
+            db.commit()
         
-    else:
+        else:
         # if present then update order_item table
         # this is to check if item is already present in order_item table or not
-        print("came into else part")
-        print(user[0])
-        f = "select menu_id from restro_db.order_item where order_id= {0} ".format(user[0])
-        cmd.execute(f)
-        findmenu_id = cmd.fetchall()
-        
-        db.commit()
-        if findmenu_id is None:
-            print("cameeeeeee")
-            q5 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(user[0],menuId,1)
+     
+            print("user data in not none it is already present ")
+            # check if item is already present in order_item table or not
+            q5 = "select * from restro_db.order_item where order_id='{0}' and menu_id='{1}'".format(user[0],menuId)
             cmd.execute(q5)
+            item = cmd.fetchone()
             db.commit()
-        else:
-       
-            for i in findmenu_id:
-                
-                menuId = int(menuId)
-                if i[0] == menuId:
-                    
-                    q6 = "update restro_db.order_item set quantity = quantity+1 where order_id = '{0}' and menu_id = '{1}'".format(user[0],menuId)
-                    cmd.execute(q6)
-                    db.commit()
-                    break
+            print(item)
+            if item is None:
+            # if not present then insert into order_item table
+                q6 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(user[0],menuId,1)
+                cmd.execute(q6)
+                db.commit()
             else:
-                q7 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(user[0],menuId,1)
+            # if present then update order_item table
+                q7 = "update restro_db.order_item set quantity=quantity+1 where order_id='{0}' and menu_id='{1}'".format(user[0],menuId)
                 cmd.execute(q7)
                 db.commit()
-    
-    db.close()
 
+    else:
+# this is to check quantity of item in order_item table
+        q5 = "select quantity from restro_db.order_item where order_id = '{0}' and menu_id = '{1}'".format(user[0],menuId)
+        cmd.execute(q5)
+        quantity = cmd.fetchone()
+        db.commit()
+        print(quantity)
+        if quantity[0] == 1:
+            q6 = "delete from restro_db.order_item where order_id = '{0}' and menu_id = '{1}'".format(user[0],menuId)
+            cmd.execute(q6)
+            db.commit()
+        else:
+            q7 = "update restro_db.order_item set quantity = quantity-1 where order_id = '{0}' and menu_id = '{1}'".format(user[0],menuId)
+            cmd.execute(q7)
+            db.commit()
+        
+    db.close()
     return JsonResponse("updated item",safe=False)
 
 
-def CheckOut(request):
-    return render(request,'CheckOut.html')    
+def CheckOut(request, username):
+    db,cmd = connection()
+    q="select uid from user_table where username='{0}'".format(username)
+    cmd.execute(q)
+    uid = cmd.fetchall()
+    db.commit()
+    
+    q2="select order_id from restro_db.order where uid='{0}'".format(uid[0][0])
+    cmd.execute(q2)
+    order_id = cmd.fetchall()
+    db.commit()
+
+    q3="select menu_id, quantity from restro_db.order_item where order_id={0}".format(order_id[0][0])
+    cmd.execute(q3)
+    order_item = cmd.fetchall()
+    db.commit()
+
+    menu_item = []
+    for i in order_item:
+        q4="select * from restro_db.menu where menu_id={0}".format(i[0])
+        cmd.execute(q4)
+        menu_item.append(cmd.fetchall())
+        db.commit()
+    
+    quantity = []
+    for x in order_item:
+        if x[1]<0:
+            continue        
+        quantity.append(int(x[1]))
+
+    amt = []
+    # print(menu_item[0][0][4])
+    # print(quantity)
+    for i in range(len(menu_item)):
+        amt.append(quantity[i]*menu_item[i][0][4])
+    # print(amt)
+      
+    total = sum(amt)
+      
+
+    db.close()
+    return render(request,'CheckOut.html',{'total':total,'quantity':quantity,'amt':amt,'menu':menu_item})
+
+
+
+def shipping(request):
+    city = request.POST.get('city')
+    state = request.POST.get('state')
+    address = request.POST.get('address')
+    zipcode = request.POST.get('zipcode')
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    username = request.COOKIES.get('CookiesUsername')  
+    password = request.COOKIES.get('CookiesPassword')
+    print(city,state,address,zipcode,name,email)
+    db,cmd = connection()
     
 
+    q="select uid from user_table where username='{0}'".format(username)
+    cmd.execute(q)
+    uid = cmd.fetchall()
+    print(uid[0][0])
+    db.commit()
+    q1 = "select order_id from restro_db.order where uid='{0}'".format(uid[0][0])
+    cmd.execute(q1)
+    order_id = cmd.fetchall()
+    print(order_id[0][0])
+    print(type(order_id[0][0]))
+    db.commit()
+
+    
+    q3="select menu_id, quantity from restro_db.order_item where order_id={0}".format(order_id[0][0])
+    cmd.execute(q3)
+    order_item = cmd.fetchall()
+    db.commit()
+
+    menu_item = []
+    for i in order_item:
+        q4="select * from restro_db.menu where menu_id={0}".format(i[0])
+        cmd.execute(q4)
+        menu_item.append(cmd.fetchall())
+        db.commit()
+    
+    quantity = []
+    for x in order_item:
+        if x[1]<0:
+            continue        
+        quantity.append(int(x[1]))
+
+    amt = []
+    # print(menu_item[0][0][4])
+    # print(quantity)
+    for i in range(len(menu_item)):
+        amt.append(quantity[i]*menu_item[i][0][4])
+    # print(amt)
+    total = sum(amt)
+    q3 = "insert into restro_db.shiping_address (uid,order_id,address,city,state,zipcode,date_added) values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}')".format(uid[0][0],order_id[0][0],address,city,state,zipcode,datetime.now())
+    cmd.execute(q3)
+    db.commit()
+    db.close()
+   
+    return render(request,'shipping.html',{'city':city,'state':state,'address':address,'zipcode':zipcode,'name':name,'email':email,'total':total,'quantity':quantity,'amt':amt,'menu':menu_item})
+
+    
+
+def recipe(request):
+    return render(request,'recipe.html')
 
 
+def searchResult(request):
+    result = request.POST.get('search')
 
-
+    return render(request,'searchResult.html',{"result":result})
 
 

@@ -187,12 +187,18 @@ header .icons #menu-bars {
   height: 100%;
   margin-top: 2rem;
   height: fit-content;
+  /* background-image: url('intro1.jpg'); */
+  background-image: url('main-img2.jpg');
+  background-size:cover;
+  background-repeat: no-repeat;
 }
 
 .swiper-slide {
   text-align: center;
   font-size: 18px;
-  background: var(--white);
+  /* background: var(--white); */
+ 
+
 
   /* Center slide text vertically */
   display: -webkit-box;
@@ -214,11 +220,16 @@ header .icons #menu-bars {
 }
 
 .swiper-slide img {
-    margin-top: 2rem;
+  margin-top: 2rem;
   display: block;
   width:100%;
-  height: 40rem;
+  height: 60rem;
   object-fit: fill;
+}
+#contain-img{
+  width:60rem;
+  height: 60rem;
+  /* object-fit: fill; */
 }
 
 /* popular dishes section */
@@ -808,5 +819,10 @@ header .icons #menu-bars {
     padding: 0rem;
 
     font-size: 2rem;
+  }
+
+  #contain-img{
+    height: 12rem;
+    width: 13rem;
   }
 }

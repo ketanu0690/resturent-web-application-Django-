@@ -10,21 +10,12 @@
     />
     <title>Resturant</title>
     <link rel="shortcut icon" href="{%static 'images/image13.jpg' %}" type="image/x-icon" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/swiper/swiper-bundle.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-
-
 
     <script  type="text/javascript" >
       function getCookie(name) {
@@ -52,8 +43,10 @@
     <header>
       <a href="#" class="logo"><i class="fas fa-utensils"></i>restro.</a>
       <nav class="navbar">
-        <a href="">{{fname}}</a>
+        <!-- <a href="">{{fname}}</a> -->
         <a class="active" href="Home">home</a>
+        <a href="recipe">Recipes</a>
+        <a href="Reels"> NEW  Food Reels</a>
             <a href="#about">about</a>
     
         <a href="#order">order</a>
@@ -68,7 +61,7 @@
         <a href="#" class="fas fa-heart"></a>
         <div id="cart">
           <a href="{%url 'AddToCart' username %}" id="cart-icon" class="fas fa-shopping-cart"></a>
-          <p id="cart-total">0</p>
+          <p id="cart-total">{{sum_quantity}}</p>
         </div>
         
         <span id="dark">
@@ -76,15 +69,18 @@
         ></span>
       </div>
     </header>
-    <form action="" id="search-form">
-      <input
-        type="search"
-        placeholder="search here.."
-        name=""
-        id="search-box"
-      />
+    
+    <div id="search-form">
+      <form action="searchResult" method="post">
+      {% csrf_token %}
+      <input type="text" placeholder="search here..." name="search" id="search-box"/>
+      <button type="submit" id="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+
       <i class="fas fa-times" id="close"></i>
     </form>
+    </div>
 
     <br /><br />
     <div id="navbar2">
@@ -93,6 +89,7 @@
         <a href="{%url 'logout' username %}">Logout</a>
     </div>
 
+    <!-- loader -->
     <div class="spinner-wrapper">
         <div class="spinner">
             <h1> Loding...</h1>
@@ -102,54 +99,30 @@
           </div>
         </div>
 
-
-   
-
     <br /><br />
+
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
-
-        <!-- for i in MenuData -->
-
+        {% for y in MenuData %}
         <div class="swiper-slide">
           <div class="content" id="content">
-            <img src="{%static 'images/img1.jpg' %}" id="slider-img" alt="" />
+            <div id="contain-img"><img src="static/{{y.3}}" id="slider-img" alt="" /></div>
             <span> our special dish </span>
-            <h3>Cheese Burger</h3>
+            <h3>{{y.1}}</h3>
             <p>most famous in india</p>
             <a href="order" class="btn">order now</a>
           </div>
         </div>
-
-        <!-- endfor -->
-        <div class="swiper-slide">
-          <div class="content" id="content">
-            <img src="{%static 'images/image2.jpg' %}" id="slider-img" alt="" />
-            <span> our special dish </span>
-            <h3>pan cake</h3>
-            <p>fill your self with joy</p>
-            <a href="order" class="btn">order now</a>
-          </div>
-        </div>
-        <div class="swiper-slide">
-          <div class="content" id="content">
-            <img src="{%static 'images/img3.jpg'%}" id="slider-img" alt="" />
-            <span> our special dish </span>
-            <h3>margerita pizza</h3>
-            <p>loving it</p>
-            <a href="order" class="btn">order now</a>
-          </div>
-        </div>
+{% endfor %}
+       
       </div>
       <div class="swiper-button-next"></div>
       <div class="swiper-button-prev"></div>
       <br /><br />
       <div class="swiper-pagination"></div>
     </div>
-
     <br /><br /><br />
 
-  
     <section class="dishes" id="dishes">
       <h3 class="sub-heading">our dishes</h3>
       <h1 class="heading">populor dishes</h1>
@@ -164,6 +137,7 @@
           <a href="{%url 'ViewProducts' y.0 %}" class="fas fa-eye"></a>
           <img src="static/{{y.3}}" alt="ketan" />
           <h3>{{y.1}}</h3>
+          <h3>{{y.2}}</h3>
           <div class="stars">
             <i class="fas fa-star"></i>
             <i class="fas fa-star"></i>
@@ -172,7 +146,7 @@
             <i class="fas fa-star-half-alt"></i>
           </div>
           <span>Rs. {{y.4}}</span>
-          <a  data-product={{y.0}} data-action="add" data-username="{{username}}" class="btn update-cart">Add To Cart</a>
+          <a  data-product={{y.0}} data-action="add" data-username="{{username}}"  onclick="location.reload()" class="btn update-cart">Add To Cart</a>
         </div>
 
         {% endfor %}
@@ -229,104 +203,30 @@
 
       <div class="box-container">
         <!-- for i in specialMenu -->
-
+{% for y in MenuData %}
         <div class="box">
           <div class="image">
-            <img src="{%static 'images/image15.jpg' %}" alt="" />
+            <img src="static/{{y.3}}" alt="" />
             <a href="#" class="fas fa-heart"></a>
           </div>
           <div class="content">
             <div class="stars">
-
         <!-- edit starts on user review -->
-
               <i class="fas fa-star"></i>
               <i class="fas fa-star"></i>
               <i class="fas fa-star"></i>
               <i class="fas fa-star"></i>
               <i class="fas fa-star-half-alt"></i>
-
             </div>
-            <h3>delicious food</h3>
-            <p>most famous food in the world</p>
-            <a href="#" class="btn">add to cart</a>
-            <span class="price">$12.99</span>
+            <h3>{{y.1}}</h3>
+            <p>{{y.2}}</p>
+            <a data-product={{y.0}} data-action="add" data-username="{{username}}" class="btn update-cart">add to cart</a>
+            <span class="price">Rs.{{y.4}}</span>
           </div>
         </div>
         <!-- endfor -->
+        {% endfor %}
 
-        <div class="box">
-          <div class="image">
-            <img src="{%static 'images/image16.jpg'%}" alt="" />
-            <a href="#" class="fas fa-heart"></a>
-          </div>
-          <div class="content">
-            <div class="stars">
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star-half-alt"></i>
-            </div>
-            <h3>delicious food</h3>
-            <p>most famous food in the world</p>
-            <a href="#" class="btn">add to cart</a>
-            <span class="price">$12.99</span>
-          </div>
-        </div>
-
-        <div class="box">
-          <div class="image">
-            <img src="{%static 'images/image17.jpg'%}" alt="" />
-            <a href="#" class="fas fa-heart"></a>
-          </div>
-          <div class="content">
-            <div class="stars">
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star-half-alt"></i>
-            </div>
-            <h3>delicious food</h3>
-            <p>most famous food in the world</p>
-            <a href="#" class="btn">add to cart</a>
-            <span class="price">$12.99</span>
-          </div>
-        </div>
-
-        <div class="box">
-          <div class="image">
-            <img src="{%static 'images/image18.jpg'%}" alt="" />
-
-            <a href="#" class="fas fa-heart"></a>
-          </div>
-          <div class="content">
-            <div class="stars">
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star"></i>
-
-              <i class="fas fa-star-half-alt"></i>
-            </div>
-            <h3>delicious food</h3>
-            <p>most famous food in the world</p>
-            <a href="#" class="btn">add to cart</a>
-            <span class="price">$12.99</span>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -481,9 +381,7 @@
       </div>
       <div class="credit">Coyright @2021 by <span>ketan upadhyay</span></div>
     </section>
-
     <script language="JavaScript"  src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
-
     <script type="module">
       import Swiper from "https://unpkg.com/swiper@7/swiper-bundle.esm.browser.min.js";
 
@@ -508,10 +406,6 @@
       document.cookie = "CookiesUsername={{username}}; expires=Thu, 18 Dec 2022 12:00:00 UTC";
       document.cookie = "CookiesPassword={{password}}; expires=Thu, 18 Dec 2022 12:00:00 UTC";
 
-
-
-
-
 //   fetching geo location of user
 const successfulLookup = position => {
   const { latitude, longitude } = position.coords;
@@ -524,30 +418,13 @@ const successfulLookup = position => {
       const { formatted } = data.results[0].annotations;
       const { name } = data.results[0].annotations.timezone;
       const { offset } = data.results[0].annotations.timezone;
-      const { timezone } = data.results[0].annotations;
-      console.log(country_code);
-      console.log(city);
-      console.log(name);
-      console.log(timezone);
-      console.log(country);
-     // document.cookie = `CookiesCountry=${country_code}; expires=Thu, 18 Dec 2022 12:00:00 UTC`;
-     
+      const { timezone } = data.results[0].annotations;   
     });
 }
       if (window.navigator.geolocation) {
         window.navigator.geolocation.getCurrentPosition(successfulLookup,console.log);
       }
 
-
-        // Geolocation available
-         
-
-//ajax csrf token
-
-
-
-
-        
     </script>
     <!-- chat room -->
     <!-- <script type="text/javascript" id="zsiqchat">var $zoho=$zoho || {};$zoho.salesiq = $zoho.salesiq || {widgetcode: "96756975ac1c2aab2d1534678a55b38f72331f5b1d42dde7cd6d8777b26293bca81d6b547a35c109951d24f6be71d2d0", values:{},ready:function(){}};var d=document;s=d.createElement("script");s.type="text/javascript";s.id="zsiqscript";s.defer=true;s.src="https://salesiq.zoho.in/widget";t=d.getElementsByTagName("script")[0];t.parentNode.insertBefore(s,t);</script> -->

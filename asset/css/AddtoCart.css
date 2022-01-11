@@ -50,10 +50,20 @@
     overflow-y: scroll;
     
   }
+  #item{
+    display: flex;
+    flex-direction:row;
+    width: 90px;
+    height: 101px;
+    margin: 51px;
+  }
+  #item img{
+    width: 100%;
+  }
   .item,.quantity,.price{
     flex: 1;
     padding: 20px 30px;
-    /* height: 120px; */
+    height: 120px;
   }
   #container{
     width: 90px;
@@ -67,9 +77,21 @@
     margin: 10px;
   }
    
-#button_qnt{
+  #imga,#description,#button_qnt{
   display: flex;
+width: 100%;
 }  
+#button_qnt button i{
+color: #fff;
+}
+
+
+#button_qnt button{
+  background-color: #7EC855;
+  color: #fff;
+  width: 5rem;
+  margin: 1rem;
+}
   /* Let’s add some basic style to  product name and description. */
   
 .total-price {
@@ -112,8 +134,8 @@
       height: 5rem;
     }
     .image,
-    .quantity,
-    .description {
+    .quantity
+   {
       width: 100%;
       text-align: center;
       margin: 6px 0;

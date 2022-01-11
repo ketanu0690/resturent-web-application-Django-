@@ -42,7 +42,7 @@ $(document).ready(function() {
   //Add to cart option
 
 
-  function updateUserOrder(productId,action,username){
+function updateUserOrder(productId,action,username){
     // console.log("user is logged in ")
     var url = '/updatecart'
   
@@ -59,11 +59,13 @@ $(document).ready(function() {
     return response.json()
   })
   .then((data)=>{
-    
-    console.log('data',data)
+    console.log("updated");
   })
-  
-  }
+  .catch((error)=>{
+    console.log(error)
+  })
+}
+
 
   var updateBtns = document.getElementsByClassName('update-cart')
   for (var i=0;i<updateBtns.length;i++){
@@ -71,20 +73,14 @@ $(document).ready(function() {
       var productId = this.dataset.product
       var action = this.dataset.action
       var username = this.dataset.username
-      // console.log("username here",username)
-      // console.log('ProductId',productId,'action',action,'username',username)
+      console.log(productId,action,username)
+    
 updateUserOrder(productId,action,username)
 
     })
   }
 
-
-
-
-  // console.log("cart added");
-
 // error:-
 // menu do not go away on resizeing the screen 
 // window on resize will relode the page
-
-  
+// adding search fucntinality using ap id and key

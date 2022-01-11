@@ -7,78 +7,104 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
     <link rel="stylesheet" href="{% static 'css/AddtoCart.css' %}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    
+    <script  type="text/javascript" >
+        function getCookie(name) {
+        
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+  
+      </script>
 </head>
 
 <body>
-
+    <center>{{menu.0}}</center> 
     <div class="shopping-cart">
         <!-- Title -->
         <div class="title">
             <a href="{% url 'Home' %} "><i class="uil uil-arrow-left"></i>Continue Shopping </a>
+            <br>
             <a>Shopping Bag</a>
-            <a href="{% url 'CheckOut' %}" id="checkout">checkout<i class="uil uil-arrow-right"></i></a>
+            <br>
+            <a href="{% url 'CheckOut' username  %}" id="checkout">checkout<i class="uil uil-arrow-right"></i></a>
             <a>Total Amount: {{total}} Rs.</a>
 
         </div>
 
-        
+
         <div class="product">
             <!-- items -->
-            <div class="item">
-            {%for y in menu %}
-            <div id="container">
-                <div class="image">
-                <img src="static/{{y.0.3}}" alt="ketan" />
+            <div class="item" >
+                {%for y in menu %}
+                <div id="item">
+                    <div  id="imga" class="image">
+                        <img src="static/{{y.0.3}}" alt="ketan" />
+                    </div>
+                    
+
+                    <div id="description" class="description">
+                        <span>{{y.0.1}}</span>
+                        <span>{{y.0.2}}</span>
+                    </div>
+
+                <div id="button_qnt">
+
+                    <button  data-product={{y.0.0}} data-action="add" data-username="{{username}}" onclick="location.reload()"  class="btn update-cart"> 
+                        <i class="far fa-plus-square"></i></button>
+                       
+                    <button  data-product={{y.0.0}} data-action="remove" data-username="{{username}}" onclick="location.reload()"  class="btn update-cart"> 
+                            <i class="far fa-minus-square"></i></button>
+                </div>
             </div>
-            <div class="description">
-                <span>{{y.0.1}}</span>
-                <span>{{y.0.2}}</span>
+                {% endfor %}
             </div>
-        </div>
-                
-            
-            {% endfor %}
-        </div>
             <!-- item quantity -->
             <div class="quantity">
-            {% for x in quantity %}
-            <div id="container">
-                <div id="button_qnt">
-                    <button class="plus-btn" type="button" name="button">
-                        <i class="uil uil-plus-circle"></i>
-                    </button>
-                    <input type="text"  id="input_qnt" name="name" value="{{x}}" disabled>
-                    <button class="minus-btn" type="button" name="button">
-                        <i class="uil uil-minus-circle"></i>
-                    </button>
+                {% for x in quantity %}
+                <div id="container">
+                    
+                    <div >
+                        <input type="text" id="input_qnt" name="name"  value='{{x}}' disabled>
+                    </div>
                 </div>
-                
+                {% endfor %}
             </div>
-                
-            {% endfor %}
-        </div>
             <!-- total price -->
             <div class="price">
-            {% for z in amt %}
-            <div id="container">
-                <div id="price_bnt">
-                     <div class="total-price"> {{z}} Rs.</div>
-                <div class="remove-item">
-                    <i class="uil uil-trash-alt"></i>
+                {% for z in amt %}
+                <div id="container">
+                    <div id="price_bnt">
+                        <div class="total-price"> {{z}} Rs.</div>
+                        <div class="remove-item">
+                            <i class="uil uil-trash-alt"></i>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+                {% endfor %}
                
             </div>
-                
-            
-            {% endfor %}
+           
         </div>
-
-        </div>
-
+        <script src="{%static 'js/AddtoCart.js '%}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 
 </html>
