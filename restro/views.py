@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from.token import gentrate_token
 from .pool import connection
+import requests
 
 
 def main(request):
@@ -496,8 +497,11 @@ def recipe(request):
 
 
 def searchResult(request):
-    result = request.POST.get('search')
-
-    return render(request,'searchResult.html',{"result":result})
+    search = request.POST.get('search')
+    import requests
+    url ="https://api.edamam.com/search?q=$'{0}'&app_id=2eb7968d&app_key=629ba1f4fb6403c68c9f783ca5228c61&from=10&to=20".format(search)
+    response = requests.get(url)
+    data = response.json()
+    return render(request,'searchResult.html',{'data':data})
 
 

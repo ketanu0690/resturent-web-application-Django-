@@ -1,10 +1,12 @@
-console.log("came hereeeeeeeee")
 const searchForm = document.querySelector("form");
 const searchResultDiv = document.querySelector(".search-result");
 const container = document.querySelector(".container");
 let searchQuery = "";
-const APP_ID = "93813c64";
-const APP_key = "5b60384c81932f157cda70262002fd3a";
+const APP_ID = "2eb7968d";
+const APP_key = "629ba1f4fb6403c68c9f783ca5228c61";
+var from = 0;
+var to = 5;
+
 console.log(container)
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -12,12 +14,14 @@ searchForm.addEventListener("submit", (e) => {
   fetchAPI();
 });
 
+
 async function fetchAPI() {
-  const baseURL = `https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=0&to=20`;
-  const response = await fetch(baseURL);
+  console.log("came here on fetchAPI");
+  const response = await fetch(`https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=${from}&to=${to}`);
   const data = await response.json();
+  const loading = document.querySelector(".searcrh-result2");
+  loading.style.display = "none";
   generateHTML(data.hits);
-  console.log(data);
 }
 
 function generateHTML(results) {

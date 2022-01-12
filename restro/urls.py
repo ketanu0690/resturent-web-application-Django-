@@ -23,6 +23,6 @@ urlpatterns = [
     path('CheckOut<username>',views.CheckOut,name='CheckOut'),
     path('shipping',views.shipping,name='shipping'),
     path('recipe',views.recipe,name='recipe'),
-    path('searchResult',views.searchResult,name='searchResult?'),
+    path('searchResult',views.searchResult,name='searchResult'),
 
 ]

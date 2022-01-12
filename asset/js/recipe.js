@@ -1,23 +1,63 @@
-print("came hereeeeeeeee")
 const searchForm = document.querySelector("form");
 const searchResultDiv = document.querySelector(".search-result");
 const container = document.querySelector(".container");
 let searchQuery = "";
-const APP_ID = "93813c64";
-const APP_key = "5b60384c81932f157cda70262002fd3a";
-console.log(container)
+const APP_ID = "2eb7968d";
+const APP_key = "629ba1f4fb6403c68c9f783ca5228c61";
+var from = 0;
+var to = 5;
+
+const next = () => {
+  if (searchQuery == "") {
+    alert("Please enter a search query");
+  } else {
+    if (to < 100) {
+      const previous = document.querySelector(".previous");
+      previous.style.display = "block";
+        from += 5;
+        to += 5;
+        fetchAPI();
+    }
+  }
+}
+
+const previous = () => {
+
+  if (searchQuery == "") {
+    alert("Please enter a search query");
+  } else { 
+    
+    if (from==1) {
+      const previous = document.querySelector(".previous");
+      previous.style.display = "none";
+    }
+    else {
+      from -=5;
+      to -=5;
+      fetchAPI();
+    }
+  }
+  }
+
+
 searchForm.addEventListener("submit", (e) => {
+  console.log("came here on submit");
   e.preventDefault();
   searchQuery = e.target.querySelector("input").value;
+  console.log(searchQuery);
   fetchAPI();
 });
 
 async function fetchAPI() {
-  const baseURL = `https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=0&to=20`;
-  const response = await fetch(baseURL);
+  const spinner = document.querySelector(".spinner");
+  spinner.style.display = "block";
+  console.log("came here on fetchAPI");
+  const response = await fetch(`https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=${from}&to=${to}`);
   const data = await response.json();
-  generateHTML(data.hits);
+  const loading = await(document.querySelector(".spinner").style.display = "none");
+  spinner.style.display = "none";
   console.log(data);
+  generateHTML(data.hits);
 }
 
 function generateHTML(results) {

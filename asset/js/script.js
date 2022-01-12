@@ -7,6 +7,45 @@ document.querySelector("#close").onclick = () => {
   document.querySelector("#search-form").classList.remove("active");
 };
 
+
+const searchForm = document.querySelector("form");
+
+// const searchResultDiv = document.querySelector(".search-result");
+// const container = document.querySelector(".container");
+let searchQuery = "";
+const APP_ID = "2eb7968d";
+const APP_key = "629ba1f4fb6403c68c9f783ca5228c61";
+var from = 0;
+var to = 5;
+
+// const searchForm = document.querySelector("#search-form");
+console.log(searchForm);
+// searchForm.addEventListener("submit", (e) => {
+//   e.preventDefault();
+//   searchQuery = e.target.querySelector("input").value;
+//   console.log(searchQuery);
+//   fetchAPI();
+// });
+
+// async function fetchAPI() {
+//   const spinner = document.querySelector(".spinner");
+//   spinner.style.display = "block";
+//   console.log("came here on fetchAPI");
+//   const response = await fetch(`https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=${from}&to=${to}`);
+//   const data = await response.json();
+//   console.log(data);
+// }
+
+
+
+
+
+
+
+
+
+
+
 //   for menu bar
 menuBar = () => {
   var x = document.querySelector("#navbar2");

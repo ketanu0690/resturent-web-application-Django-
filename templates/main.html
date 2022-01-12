@@ -70,21 +70,22 @@
       </div>
     </header>
     
+
     <div id="search-form">
-      <form action="searchResult" method="post">
+      <form action="searchResult" method="post" >
       {% csrf_token %}
       <input type="text" placeholder="search here..." name="search" id="search-box"/>
-      <button type="submit" id="search-btn">
         <i class="fas fa-search"></i>
-      </button>
-
       <i class="fas fa-times" id="close"></i>
     </form>
     </div>
 
+
     <br /><br />
     <div id="navbar2">
         <a class="active" href="#home">home</a>
+        <a href="recipe">Recipes</a>
+        <a href="Reels"> NEW  Food Reels</a>
         <a href="#about">about</a>
         <a href="{%url 'logout' username %}">Logout</a>
     </div>
@@ -301,7 +302,7 @@
         </div>
       </div>
     </section>
-
+<!-- 
     <section class="order" id="order">
       <h3 class="sub-heading">contact now</h3>
       <h1 class="heading">free and fast</h1>
@@ -342,7 +343,7 @@
 
         <input type="submit" value="order now" class="btn" />
       </form>
-    </section>
+    </section> -->
 
     <section class="footer">
       <div class="box-container">
