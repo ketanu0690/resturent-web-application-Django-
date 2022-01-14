@@ -99,8 +99,8 @@
             <div class="bounce3"></div>
           </div>
         </div>
-
     <br /><br />
+
 
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
@@ -124,12 +124,44 @@
     </div>
     <br /><br /><br />
 
+
+<!-- chat bot -->
+    
+  <div id="body"> 
+  <div id="chat-circle" class="btn btn-raised">
+          <div id="chat-overlay"></div>
+          <i class="fas fa-comment-alt"></i>
+  </div>
+    <div class="chat-box">
+      <div class="chat-box-header">
+    <h3>Chat with us</h3>
+        <span class="chat-box-toggle"><i class="fas fa-times" id="close"></i></span>
+      </div>
+
+      <div class="chat-box-body">
+        
+        <div class="chat-box-overlay">   
+        <!-- chat overlay -->
+        </div>
+
+        <div class="chat-logs">
+<!--chat-log -->
+        </div>
+      </div>
+      <div class="chat-input">      
+        <form>
+          <input type="text" id="chat-input" placeholder="Send a message..."/>
+        <button type="submit" class="chat-submit" id="chat-submit"><i class="fas fa-paper-plane"></i></button>
+        </form>      
+      </div>
+    </div>
+  </div>
+
+
     <section class="dishes" id="dishes">
       <h3 class="sub-heading">our dishes</h3>
       <h1 class="heading">populor dishes</h1>
       <div class="box-container">
-
-
 <!-- Menu data  -->
         {% for y in MenuData %}
 
