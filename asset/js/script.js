@@ -45,11 +45,11 @@ $(document).ready(function () {
 });
 
 //Add to cart option
-function updateUserOrder(productId, action, username) {
+async function updateUserOrder(productId, action, username) {
   // console.log("user is logged in ")
   var url = "/updatecart";
 
-  fetch(url, {
+ await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,11 +61,12 @@ function updateUserOrder(productId, action, username) {
       username: username,
     }),
   })
-    .then((response) => {
+    . then((response) => {
       return response.json();
     })
     .then((data) => {
       console.log("updated");
+       window.location.reload()
     })
     .catch((error) => {
       console.log(error);

@@ -78,9 +78,6 @@
 
 <!-- registration form  -->
 
-
-
-
 <div class="form-container sign-up-form">
   <div class="imgBox sign-up-imgBox">
     <div class="sliding-link">
@@ -91,26 +88,14 @@
     </div>
   <div class="form-box sign-up-box">
     <h2>Sign up</h2>
-    <div class="login-options">
-      
-      <div class="other-logins">
-        <!-- <a href="" 
-          ><img src="{%static 'login_images/google.png'%}" alt=""
-        /></a> -->
-        <div class="g-signin2" data-onsuccess="onSignIn"> </div>
-        <a href=""
-          ><img src="{%static 'login_images/github.png'%}" alt=""
-        /></a>
-        <a href=""
-          ><img src="{%static 'login_images/facebook.png'%}" alt=""
-        /></a>
-      </div>
-      <p class="text">Or , sigup with ...</p>
-    </div>
     <h6>{{success}}</h6>
     <h6>{{error}}</h6>
     <form action="Addregister" method="post">
       {%csrf_token%}
+      <div class="field">
+        <i class="uil uil-user"></i>
+        <input type="text" placeholder="Rasturant name" name="rasturantName" required>
+      </div>
       <div class="field">
         <i class="uil uil-user"></i>
         <input type="text" placeholder="Username" name="username" required />
@@ -118,16 +103,25 @@
 
       <div class="field">
         <i >F</i>
-        <input type="text" placeholder="firstname" name="fname" required>
+        <input type="text" placeholder="fullname" name="fullname" required>
       </div>
       <div class="field">
-        <i >L</i>
-        <input type="text" placeholder="lastname" name="lname" required>
+        <i >P</i>
+        <input type="text" placeholder="Phone Number" name="phone" required>
       </div>
       <div class="field">
         <i class="uil uil-at"></i>
         <input type="email" placeholder="email" name="email" required>
       </div>
+      <div class="field">
+        <i class="uil uil-light">C</i>
+        <input type="text" placeholder="city" name="city" required>
+      </div>
+      <div class="field">
+        <i>A</i>
+        <input type="text" placeholder="address" name="address" required>
+      </div>
+      
       <div class="field">
         <i class="uil uil-lock"></i>
         <input type="password" placeholder="password" name="pass"required>
@@ -136,7 +130,6 @@
       <div class="field">
         <i class="uil uil-lock-access"></i>
         <input type="password" placeholder="confirm password" name="c_pass"required>
-        
       </div>
       <div class="forgot-link">
         <a href="">Forget password?</a>
@@ -148,14 +141,6 @@
 
 
 </div>
-
-
-
-
-
-
-
-
 
 
     <script>
@@ -229,22 +214,9 @@
         console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
       }
     </script>
-    <!-- <form action="login" method="post">
-      {%csrf_token%}
-      <label for="username">username</label>
-      <input type="text" placeholder="username" name="username" required />
-      <br />
-      <label for="password">password</label>
-      <input type="password" placeholder="password" name="pass" required />
-      <br />
-      <button type="submit">Log in</button>
-    </form>
-    <br />
-    <a href="register">Sign Up</a>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <a href="#" onclick="signOut();">Sign out</a> -->
-
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+
   </body>
 </html>

@@ -1,9 +1,12 @@
 from datetime import datetime
+from distutils.log import error
+from email import message
 from django.http import HttpResponse ,JsonResponse
 from django.shortcuts import render,redirect
 import json
 from restro import settings
-from django.core.mail import send_mail , EmailMessage
+from django.core.mail import send_mail , EmailMessage, EmailMultiAlternatives
+from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
@@ -56,34 +59,38 @@ def register(request):
         else:
             db,cmd = connection()
             # q="INSERT INTO restro_db.user_table (uid, username, first_name, last_name, password, email, login_check, city`) VALUES ('yure', 'hhhj', 'jhvkh', 'hkjh', '78', 'ketanup@gm.com', 'false', 'gwal');"
-            q="INSERT INTO restro_db.user_table (uid,username,first_name, last_name, password, email,login_check,city) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}','{7}');".format(uid,username,firstname,lastname,password,email,login_check,city)
+            q="INSERT INTO restro_db.user_table (uid,username,first_name, last_name, password, email,login_check,city,phone) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}','{7}','{8}');".format(uid,username,firstname,lastname,password,email,login_check,city,phone)
             cmd.execute(q)
             db.commit()
             db.close()
 
             # welcome email message 
-            subject = 'Welcome  Email From Restro'
-            message = 'Hello '+firstname+'\n\n'+' Welcome to Restro '+'\n\n'+' Thank you for registering with us ....... '+'  we have sent you a confirmation email ..'+'thanking you \n\n from ketan upadhyay'+'\n\n'+' Please click on the link to activate your account  '
+            subject = 'Welcome Email From Restro'
             from_email = settings.EMAIL_HOST_USER
             to_list = [email]
-            send_mail(subject,message,from_email,to_list,fail_silently=True)
+            message = EmailMultiAlternatives(subject, '', from_email, to_list)
+            html_template = get_template('email_template.html')
+            message.attach_alternative(html_template.render(), "text/html")
+            message.send()
+
+        
 
             #email address confirmation message
             current_site = get_current_site(request)
             subject = 'Email Confirmation'
-            message2= render_to_string('email_confirmation_message.html',{
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [email]
+            content_data = {
                 'name':firstname,
                 'domain':current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(username)),
-                'token':gentrate_token.make_token(username),
-
-            })
-            
-            from_email = settings.EMAIL_HOST_USER
-            to_list = [email]
-            email = EmailMessage(subject,message2,from_email,to_list)
-            email.fail_silently=True
-            email.send()
+                'token':gentrate_token.make_token(username)
+                }
+            message = EmailMultiAlternatives(subject, '', from_email, to_list)
+            html_template = get_template('email_confirmation_message.html').render(content_data)
+            message.attach_alternative(html_template, "text/html")
+            message.send()
+          
            
 
             return render(request,'GO_TO_EMAIL.html',{'success':'Registerd Successfully'})
@@ -101,10 +108,12 @@ def LOGIN_check(request):
     q="select login_check from restro_db.user_table where username='{0}' and password ='{1}'".format(username,password)
     cmd.execute(q)
     user=cmd.fetchone()
-
     db.commit()
+    print(user)
     
-    if user[0] == "False":
+    if user[0] == 'False':
+        return render(request,'intro.html')
+    if user is None:
         return render(request,'intro.html')
     if username is  None and password is None:
         return render(request,'intro.html')    
@@ -117,23 +126,30 @@ def LOGIN_check(request):
         
 
         if user is not None:
-            fname = user[1]
+            fname = user[2]
+            uid = user[0]
             q="select * from menu"
             cmd.execute(q)    
             MenuData = cmd.fetchall()
             db.commit()
 
-            q="select quantity from order_item "
-            cmd.execute(q)
-            order_item = cmd.fetchall()
+            q2 ="select * from restro_db.order where uid = '{0}';".format(uid)  
+            cmd.execute(q2)
+            user_check = cmd.fetchone()
+            print(user_check)
             db.commit()
-            # to find sum of quantity of all order items
-            sum_quantity = 0
-            for i in order_item:
-                sum_quantity = sum_quantity + i[0]
-            print(sum_quantity)
-    
 
+            if user_check is not None:
+
+                q="select quantity from order_item where order_id = {0} ;".format(user_check[0])
+                cmd.execute(q)
+                order_item = cmd.fetchall()
+                db.commit()
+                sum_quantity = 0
+                for i in order_item:
+                    sum_quantity = sum_quantity + i[0]
+            else:
+                sum_quantity = 0 
 
             db.close()
  
@@ -141,6 +157,7 @@ def LOGIN_check(request):
            
 
 def login(request):
+    print("came into login ")
     db,cmd = connection()
     if request.method == 'POST':
         username = request.POST['username']
@@ -158,22 +175,37 @@ def login(request):
             q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(username)
             cmd.execute(q)
             db.commit()
-            fname = user[1]
+            fname = user[2]
+            uid = user[0]
             # to fetch menu data
             q="select * from menu"
             cmd.execute(q) 
             MenuData = cmd.fetchall()   
             db.commit()
+            print(uid)
 
-            q="select quantity from order_item "
-            cmd.execute(q)
-            order_item = cmd.fetchall()
+            # to check if user have order item or not
+
+            q2 ="select * from restro_db.order where uid = '{0}';".format(uid)  
+            cmd.execute(q2)
+            user_check = cmd.fetchone()
+            print(user_check)
             db.commit()
-            sum_quantity = 0
-            for i in order_item:
-                sum_quantity = sum_quantity + i[0]
+
+            if user_check is not None:
+
+                q="select quantity from order_item where order_id = {0} ;".format(user_check[0])
+                cmd.execute(q)
+                order_item = cmd.fetchall()
+                db.commit()
+                sum_quantity = 0
+                for i in order_item:
+                    sum_quantity = sum_quantity + i[0]
+            else:
+                sum_quantity = 0        
             # print(sum_quantity)
             db.close()
+            print(username,password,fname,MenuData,sum_quantity)
             
 
             return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
@@ -188,14 +220,12 @@ def logout(request, username):
     cmd.execute(q)
     db.commit()
     db.close()
-
     response = redirect('/')
     return response
 
 def activate(request, uidb64, token):
 # activating the account on email check
     try:
-        # print("came here")
         uid = force_text(urlsafe_base64_decode(uidb64))
         db,cmd = connection()
         q="select * from user_table where username='{0}'".format(uid)
@@ -204,8 +234,9 @@ def activate(request, uidb64, token):
         db.commit()
        
     except(TypeError, ValueError, OverflowError, user.DoesNotExist):
-      
+        # print("came here in error",error,TypeError, ValueError, OverflowError, user.DoesNotExist)
         user = None
+    
     if user is not None and gentrate_token.check_token(user[0],token):
         # print("came here")
         db,cmd = connection()
@@ -213,9 +244,10 @@ def activate(request, uidb64, token):
         cmd.execute(q)
         db.commit()
         db.close()
+        # return LOGIN_check()
     
-        # print("no problem with cookies ")
-        return render(request,'main.html',{'success':'Account Activated','username':uid})
+
+        return render(request,'LOGIN.html',{'success':'Account Activated','username':uid})
       
     else:
      
@@ -256,6 +288,8 @@ def ViewProducts(request, orderId):
 
 def AddToCart(request, username):
     db,cmd = connection()
+    print(username)
+
     q="select uid from user_table where username='{0}'".format(username)
     cmd.execute(q)
     uid = cmd.fetchall()
@@ -265,6 +299,12 @@ def AddToCart(request, username):
     cmd.execute(q2)
     order_id = cmd.fetchall()
     db.commit()
+    print(order_id)
+
+    if  not order_id:
+       
+        return render(request,'EmptyCart.html')
+       
 
     q3="select menu_id, quantity from restro_db.order_item where order_id={0}".format(order_id[0][0])
     cmd.execute(q3)
@@ -307,14 +347,13 @@ def updatecart(request):
     action = data['action']
     
     username = data['username']
+    print(menuId,action,username)
     
     q1="select uid from user_table where username='{0}'".format(username)
     cmd.execute(q1)
     uid = cmd.fetchone()
     db.commit()
     
-    if uid is None:
-        uid = " "
 
     transaction_id = urlsafe_base64_encode(force_bytes(action+str(uid[0])))
     date = datetime.now()
@@ -332,6 +371,7 @@ def updatecart(request):
     # this is to check if user is already present in order table or not
         if user is None:
         # if not present then insert into order table
+        # this will automaticaly generate order_id
             q2= "INSERT INTO restro_db.order (transaction_id,uid,order_date,complete) VALUES ('{0}','{1}','{2}','{3}')".format(transaction_id,uid[0],date,false)
             cmd.execute(q2)
             db.commit()
@@ -341,7 +381,7 @@ def updatecart(request):
             order_id = cmd.fetchone()
             db.commit()
         # to set itmes in order_item table
-            q4 = "insert into restro_db.order_item (order_id,menu_id,quantity) values ('{0}','{1}','{2}')".format(order_id[0],menuId,1)
+            q4 = "insert into restro_db.order_item (menu_id,order_id,quantity,date_added) values ('{0}','{1}','{2}')".format(menuId,order_id[0],1,date)
             cmd.execute(q4)
             db.commit()
         
@@ -504,4 +544,6 @@ def searchResult(request):
     data = response.json()
     return render(request,'searchResult.html',{'data':data})
 
+def Dashboard(request):
+    return render(request,'AddReasturant/Dashboard.html')
 

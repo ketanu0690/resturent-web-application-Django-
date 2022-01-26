@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: goldenrod;">
+    
+
+
+<p>Dear {{name}},</p>
+<p>Thank you for registering at Restro. Please click on the link below to confirm your email address.</p>
+<button style="background-color: rgb(26, 180, 214);border-radius:5px"><a href="http://{{domain}}{% url 'Addactivate' uidb64=uid token=token %}">Activation Link</a></button>
+<p>If you have any questions, please contact us at {{Restro.com}}.</p>
+<p>Thank you,</p>
+<p>Restro.com</p>
+</body>
+</html>

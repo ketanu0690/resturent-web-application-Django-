@@ -16,101 +16,32 @@
     <link rel="stylesheet" href="{%static 'css/login.css' %}" />
     
 
-    <title>Document</title>
+    <title> Registration </title>
   </head>
   <body>
-    <div class="form-container sign-up-form">
-      <div class="form-box sign-up-box">
-        <h2>Login</h2>
-        <h6>{{success}}</h6>
-        <h6>{{error}}</h6>
-        <form action="Addlogin" method="post">
-          {%csrf_token%}
-          <div class="field">
-            <i class="uil uil-at"></i>
-            <input type="text" placeholder="Username" name="username" required />
-          </div>
-          <div class="field">
-            <i class="uil uil-lock-alt"></i>
-            <input
-              class="password-input"
-              type="password"
-              name="pass"
-              placeholder="Password"
-              required
-            />
-            <div class="eye-btn"><i class="uil uil-eye-slash"></i></div>
-          </div>
-          <div class="forgot-link">
-            <a href="">Forget password?</a>
-          </div>
-          <input class="submit-btn" type="submit" value="login" />
-        </form>
-        <div class="login-options">
-          <p class="text">Or , login with ...</p>
-          <div class="other-logins">
-            <!-- <a href="" 
-              ><img src="{%static 'login_images/google.png'%}" alt=""
-            /></a> -->
-            <div class="g-signin2" data-onsuccess="onSignIn"> </div>
-            <a href=""
-              ><img src="{%static 'login_images/github.png'%}" alt=""
-            /></a>
-            <a href=""
-              ><img src="{%static 'login_images/facebook.png'%}" alt=""
-            /></a>
-          </div>
-        </div>
-      </div>
-<div class="imgBox sign-up-imgBox">
-  <div class="sliding-link">
-    <p>Don't have an account?</p>
-    <span class="sign-up-btn">sign up</span>
-  </div>
-  <img src="{%static 'login_images/signin.jpg'%}" alt="">
-</div>
-
-    </div>
-
+  
 
 
 
 
 <!-- registration form  -->
 
-
-
-
 <div class="form-container sign-in-form">
-  <div class="imgBox sign-in-imgBox">
-    <div class="sliding-link">
-    <p>Already have an account?</p>
-    <span class="sign-in-btn"> sign in </span>
-    </div>
-    <img src="{%static 'login_images/signup.jpg'%}" alt="">
-    </div>
+  
   <div class="form-box sign-in-box">
     <h2>Sign up</h2>
-    <div class="login-options">
-      
-      <div class="other-logins">
-        <!-- <a href="" 
-          ><img src="{%static 'login_images/google.png'%}" alt=""
-        /></a> -->
-        <div class="g-signin2" data-onsuccess="onSignIn"> </div>
-        <a href=""
-          ><img src="{%static 'login_images/github.png'%}" alt=""
-        /></a>
-        <a href=""
-          ><img src="{%static 'login_images/facebook.png'%}" alt=""
-        /></a>
-      </div>
-      <p class="text">Or , sigup with ...</p>
-    </div>
+    
     <h6>{{success}}</h6>
     <h6>{{error}}</h6>
+
     <form action="Addregister" method="post">
       {%csrf_token%}
+
+      <div class="field">
+        <i class="uil uil-user"></i>
+        <input type="email" placeholder="Rasturant name" name="rasturant" required>
+      </div>
+      
       <div class="field">
         <i class="uil uil-user"></i>
         <input type="text" placeholder="Username" name="username" required />
@@ -118,29 +49,46 @@
 
       <div class="field">
         <i >F</i>
-        <input type="text" placeholder="firstname" name="fname" required>
+        <input type="text" placeholder="fullname" name="fullname" required>
       </div>
+
       <div class="field">
-        <i >L</i>
-        <input type="text" placeholder="lastname" name="lname" required>
+        <i >P</i>
+        <input type="text" placeholder="Phone" name="phone" required>
+        <input type="text" placeholder="OTP" name="otp" required>
+        <button id="verifyBtn" >Verify</button>
       </div>
+
       <div class="field">
         <i class="uil uil-at"></i>
         <input type="email" placeholder="email" name="email" required>
       </div>
+
+      <div class="field">
+        <i class="uil uil-light">C</i>
+        <input type="email" placeholder="city" name="city" required>
+      </div>
+
+      <div class="field">
+        <i class="uil uil-pen"></i>
+        <input type="email" placeholder="address" name="address" required>
+      </div>
+
       <div class="field">
         <i class="uil uil-lock"></i>
         <input type="password" placeholder="password" name="pass"required>
         <div class="eye-btn"><i class="uil uil-eye-slash"></i></div>
       </div>
+
       <div class="field">
         <i class="uil uil-lock-access"></i>
         <input type="password" placeholder="confirm password" name="c_pass"required>
-        
       </div>
+
       <div class="forgot-link">
         <a href="">Forget password?</a>
       </div>
+      
       <input class="submit-btn" type="submit" value="Sign up" />
     </form>
     

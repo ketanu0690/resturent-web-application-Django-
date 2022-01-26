@@ -1,0 +1,225 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="shortcut icon"
+      href="{%static 'images/image13.jpg' %}"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="{% static 'css/Dashboard.css' %}" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav>
+        <a href="#0" aria-label="forecastr logo" class="logo">
+          <h1><i class="fas fa-utensils"></i>Restro.</h1>
+        </a>
+        <button
+          class="toggle-mob-menu"
+          aria-expanded="false"
+          aria-label="open menu"
+        >
+          <h1 style="margin: 5px; color: black">
+            <i class="fas fa-arrow-circle-down"></i>
+          </h1>
+        </button>
+        <ul class="admin-menu">
+          <button
+            class="collapse-btn"
+            aria-expanded="true"
+            aria-label="collapse menu"
+          >
+            <h1 style="margin: 20px"><i class="fas fa-chevron-right"></i></h1>
+            <span>Collapse</span>
+          </button>
+          <li class="menu-heading">
+            <h3>Admin</h3>
+          </li>
+          <li>
+            <a href="#0">
+              <h1 style="margin: 20px"><i class="fas fa-comment-dots"></i></h1>
+              <span>Chat</span>
+            </a>
+          </li>
+          <li>
+            <a href="#0">
+              <h1 style="margin: 20px"><i class="fas fa-phone-square"></i></h1>
+
+              <span>Call</span>
+            </a>
+          </li>
+          <li>
+            <a href="#0">
+              <h1 style="margin: 20px"><i class="fas fa-star"></i></h1>
+
+              <span>Feedback</span>
+            </a>
+          </li>
+          <li>
+            <a href="#0">
+              <h1 style="margin: 20px"><i class="fas fa-chart-bar"></i></h1>
+
+              <span>Reports</span>
+            </a>
+          </li>
+
+          <li class="menu-heading">
+            <h3>Settings</h3>
+          </li>
+
+          <li>
+            <a href="#0">
+              <h1 style="margin: 20px"><i class="fas fa-user-cog"></i></h1>
+
+              <span>Settings</span>
+            </a>
+          </li>
+
+          <li>
+            <div class="switch">
+              <input type="checkbox" id="mode" checked />
+              <label for="mode">
+                <span></span>
+                <span>Dark</span>
+              </label>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <section class="page-content">
+      <section class="search-and-user">
+        <form>
+          <input type="search" placeholder="Search Pages..." />
+          <button type="submit" aria-label="submit form">
+            <h1><i class="fas fa-search"></i></h1>
+          </button>
+        </form>
+        <div class="admin-profile">
+          <span class="greeting">Hello admin</span>
+          <div class="notifications">
+            <span class="badge">1</span>
+            <h1><i class="fas fa-user"></i></h1>
+          </div>
+        </div>
+      </section>
+
+      <!-- to do list  -->
+
+      <!-- to do list  -->
+      <br />
+      <br />
+      <section class="grid">
+        <article>
+          <div class="wrapper">
+            <header>Todo App</header>
+            <div class="inputField">
+              <input type="text" placeholder="Add your new todo" />
+              <button><i class="fas fa-plus"></i></button>
+            </div>
+            <ul class="todoList">
+              <!-- data are comes from local storage -->
+            </ul>
+
+            <div class="footer">
+              <span
+                >You have <span class="pendingTasks"></span> pending tasks</span
+              >
+              <button>Clear All</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="container">
+          <form
+            method="post"
+            action="/Insertmenu"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-25">
+                <label for="fname">Dish Name</label>
+              </div>
+              <div class="col-75">
+                <input
+                  type="text"
+                  name="dish_name"
+                  placeholder="Name of Dish"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-25">
+                <label for="fname">Price</label>
+              </div>
+              <div class="col-75">
+                <input type="text" name="dish_price" placeholder="price" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-25">
+                <label for="fname">Category</label>
+              </div>
+              <div class="col-75">
+    
+                <select id="cars" name="dish_category">
+                  <option value="Sweet">Sweet</option>
+                  <option value="Fast_food">Fast food</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Night_life">Night life</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-25">
+                <label for="lname">PHOTO</label>
+              </div>
+              <div class="col-75">
+                <input type="file" name="dish_image" id="" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-25">
+                <label for="subject">Description</label>
+              </div>
+              <div class="col-75">
+                <textarea
+                  type="text"
+                  name="dish_description"
+                  placeholder="Description of dish"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <input type="submit" value="Submit" />
+            </div>
+          </form>
+        </div>
+
+        <article></article>
+        <article></article>
+        <article></article>
+        <article></article>
+        <article></article>
+        <article></article>
+      </section>
+    </section>
+
+    <script src="{% static 'js/Dashboard.js'%}"></script>
+  </body>
+</html>

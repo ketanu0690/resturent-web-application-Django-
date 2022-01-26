@@ -15,10 +15,17 @@
     <link rel="stylesheet" href="{% static  'css/recipe.css' %}">
 </head>
 <body>
-    
+ 
 
     <section>
+    
   <div class="container initial">
+    <div class="Home">
+      <div class="icon previous" >
+        <div class="tooltip">HOME</div>
+        <span> <a href="{% url 'Home' %} "><i class="fas fa-arrow-left"></i></a></span>
+      </div>
+      </div>
     <h1 class="brand">Get Best Recipes</h1>
     <form>
       <input type="text" placeholder="Search Your Recipe...">

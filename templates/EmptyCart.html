@@ -1,0 +1,73 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    <style>
+
+
+
+    .empty-cart{ width: 50vw;
+        margin: 0 auto;
+        text-align :center;
+        font-family :'Maison Neue';
+        font-weight: 300;}
+ 
+
+img{max-width: 20px;
+    }
+  
+  
+    
+    
+
+  
+@keyframes plopp{
+    0%{
+        transform :translate(0, 0);
+    opacity: 1;
+        }
+
+    
+  100%{transform :translate(0, -10px);
+    opacity: 0;
+}
+    
+}
+  
+    
+h3{font-size: 2rem;
+    line-height: 2rem;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;}
+  
+  
+p{color: rgba(0,0,0,0.5);
+    font-size: 18px;
+    line-height: 24px;
+    max-width :80%;
+    margin: 1.25rem auto 0 auto;
+}
+  
+  
+body{background : #f2f2f2}
+  
+</style>
+
+
+</head>
+<body>
+    <div class="empty-cart">
+
+        <img src="{%static '404_images/no-results.png'%}" alt="">
+        <h3>Your Cart is Empty</h3>
+        <p>Enjoy your Food here</p>
+      </div>
+</body>
+</html>

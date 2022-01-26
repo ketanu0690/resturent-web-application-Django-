@@ -47,8 +47,7 @@
         <a class="active" href="Home">home</a>
         <a href="recipe">Recipes</a>
         <a href="Reels"> NEW  Food Reels</a>
-            <a href="#about">about</a>
-    
+        <a href="#about">about</a>
         <a href="#order">order</a>
         <a href="{%url 'logout' username %}"> Logout</a>
       </nav>
@@ -129,7 +128,6 @@
     
   <div id="body"> 
   <div id="chat-circle" class="btn btn-raised">
-          <div id="chat-overlay"></div>
           <i class="fas fa-comment-alt"></i>
   </div>
     <div class="chat-box">
@@ -146,6 +144,7 @@
 
         <div class="chat-logs">
 <!--chat-log -->
+
         </div>
       </div>
       <div class="chat-input">      
@@ -179,7 +178,7 @@
             <i class="fas fa-star-half-alt"></i>
           </div>
           <span>Rs. {{y.4}}</span>
-          <a  data-product={{y.0}} data-action="add" data-username="{{username}}"  onclick="location.reload()" class="btn update-cart">Add To Cart</a>
+          <a  data-product={{y.0}} data-action="add" data-username="{{username}}"   class="btn update-cart">Add To Cart</a>
         </div>
 
         {% endfor %}

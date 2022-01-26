@@ -1,17 +1,25 @@
-{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
 
 
-please click on the link below to confirm your email address
-confirmation LINK :
+<p>Dear {{name}},</p>
+<p>Thank you for registering at Restro. Please click on the link below to confirm your email address.</p>
+<button style="background-color: rgb(143, 112, 216);border-radius:5px"><a href="http://{{domain}}{% url 'activate' uidb64=uid token=token %}">Activation Link</a></button>
+<p>If you have any questions, please contact us at {{Restro.com}}.</p>
+<p>Thank you,</p>
+<p>Restro.com</p>
+</body>
+</html>
 
-name = {{name}}
-uidb64={{uid}}
-domain = {{domain}}
-token = {{token}}
-http://{{domain}}{% url 'activate' uidb64=uid token=token %}
-<!-- <a href="">Link</a> -->
 
-{% endautoescape %}
 
 
 

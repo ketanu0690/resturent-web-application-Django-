@@ -1,8 +1,10 @@
+from logging import error
 from django.http import HttpResponse 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 # from .cookies import *
 from restro import settings
-from django.core.mail import send_mail , EmailMessage
+from django.core.mail import send_mail , EmailMessage , EmailMultiAlternatives
+from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
@@ -15,85 +17,167 @@ from restro.pool import connection
 def AddReasturant(request):
     return render(request, 'AddReasturant/AddReasturant.html')
 
-
-def AddReasturantlogin(request):
-        return render(request, 'AddReasturant/LOGIN.html')
-
-
-
-def AddReasturantregister(request):
-        return render(request, 'AddReasturant/register.html')
-
 def Addlogin(request):
-    pass
+    db,cmd = connection()
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['pass']
+
+        # checking user is present or not
+        q="select * from user_table where username='{0}' and password ='{1}'".format(username,password)
+        cmd.execute(q)
+        user=cmd.fetchone()
+        db.commit()
+        
+        if user is not None:
+            # set login check to true
+           
+            q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(username)
+            cmd.execute(q)
+            db.commit()
+            fname = user[1]
+            # to fetch menu data
+            q="select * from menu"
+            cmd.execute(q) 
+            MenuData = cmd.fetchall()   
+            db.commit()
+
+            q="select quantity from order_item "
+            cmd.execute(q)
+            order_item = cmd.fetchall()
+            db.commit()
+            sum_quantity = 0
+            for i in order_item:
+                sum_quantity = sum_quantity + i[0]
+            # print(sum_quantity)
+            db.close()
+            
+
+            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
+        else:
+            return render(request,'LOGIN.html',{'error':'Invalid Credentials'})
+
+    return render(request,'AddReasturant/LOGIN.html')
+
 
 def Addregister(request):
     
     if request.method == 'POST':
         username = request.POST['username']
-        firstname = request.POST['fname']
-        lastname = request.POST['lname']
+        phone = request.POST['phone']
+        city = request.POST['city']
+        address = request.POST['address']
+        rasturantName = request.POST['rasturantName']
+        fullname = request.POST['fullname']
         email = request.POST['email']
         password = request.POST['pass']
         confirmpassword = request.POST['c_pass']
-        login_check = False
+        user_login_check = False
+        if phone is not None:
+            if len(phone) != 10:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Phone Number is not valid'})
+        if email is not None:
+            if '@' not in email:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Email is not valid'})
+        if city is not None:
+            if len(city) < 3:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'City is not valid'})
+        if address is not None:
+            if len(address) < 3:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Address is not valid'})
+        if rasturantName is not None:
+            if len(rasturantName) < 3:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Rasturant Name is not valid'})
+        if fullname is not None:
+            if len(fullname) < 3:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Full Name is not valid'})
+        if username is not None:
+            if len(username) < 3:
+                return render(request,'AddReasturant/LOGIN.html',{'error':'Username is not valid'})
+
+
 
         db,cmd = connection()
-        q="select * from user_table where username='{0}' or email ='{1}'".format(username,email)
+        q="select * from restaurant_user_table where username='{0}' or email ='{1}'".format(username,email)
         cmd.execute(q)
         user=cmd.fetchone()
         db.commit()
+
         if user is not None:
-            return render(request,'register.html',{'error':'Username or email  already exist'})
+            return render(request,'AddReasturant/LOGIN.html',{'error':'Username or email  already exist'})
     
         if len(username) < 6:
-            return render(request,'register.html',{'error':'Username should be atleast 10 characters'})
+            return render(request,'AddReasturant/LOGIN.html',{'error':'Username should be atleast 10 characters'})
 
         if not username.isalnum():
-            return render(request,'register.html',{'error':'Username should be alpha numeric  only'})            
+            return render(request,'AddReasturant/LOGIN.html',{'error':'Username should be alpha numeric  only'})            
         
         if password != confirmpassword:
-            return render(request,'register.html',{'error':'Password and Confirm Password does not match'})  
+            return render(request,'AddReasturant/LOGIN.html',{'error':'Password and Confirm Password does not match'})  
     
         else:
             db,cmd = connection()
-            q="INSERT INTO restro_db.user_table (username, first_name, last_name, password, email,login_check) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}');".format(username,firstname,lastname,password,email,login_check)
+            q="INSERT INTO restro_db.restaurant_user_table (username, password, email,phone_number,user_login_check,address,full_name,restaurant_name,city) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}','{7}','{8}');".format(username,password,email,phone,user_login_check,address,fullname,rasturantName,city)
             cmd.execute(q)
             db.commit()
             db.close()
 
             # welcome email message 
-            subject = 'Welcome  Email From Restro'
-            message = 'Hello '+firstname+'\n\n'+' Welcome to Restro '+'\n\n'+' Thank you for registering with us ....... '+'  we have sent you a confirmation email ..'+'thanking you \n\n from ketan upadhyay'+'\n\n'+' Please click on the link to activate your account  '
+            subject = 'Welcome Email From Restro'
             from_email = settings.EMAIL_HOST_USER
             to_list = [email]
-            send_mail(subject,message,from_email,to_list,fail_silently=True)
+            message = EmailMultiAlternatives(subject, '', from_email, to_list)
+            html_template = get_template('email_template.html')
+            message.attach_alternative(html_template.render(), "text/html")
+            message.send()
 
             #email address confirmation message
 
             current_site = get_current_site(request)
             subject = 'Email Confirmation'
-            # message = 'Hello'+firstname+'\n\n'+'Thank you for registering with us'+'\n\n'+'Please click on the link to activate your account'
-            message2= render_to_string('email_confirmation_message.html',{
-                'name':firstname,
-                'domain':current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(username)),
-                'token':gentrate_token.make_token(username),
-
-            })
-            
             from_email = settings.EMAIL_HOST_USER
             to_list = [email]
-            email = EmailMessage(subject,message2,from_email,to_list)
-            email.fail_silently=True
-            email.send()
-            # send_mail(subject,message,from_email,to_list,fail_silently=True)
+            content_data = {
+                'name':fullname,
+                'domain':current_site.domain,
+                'uid':username,
+                'token':gentrate_token.make_token(username)
+                }
+            print(content_data['uid'])
+            message = EmailMultiAlternatives(subject, '', from_email, to_list)
+            html_template = get_template('AddReasturant/Add_email_confirmation_message.html').render(content_data)
+            message.attach_alternative(html_template, "text/html")
+            message.send()
+
+            # phone oTP validation message
+            subject = 'Phone OTP'
+
+
+
 
             return render(request,'GO_TO_EMAIL.html',{'success':'Registerd Successfully'})
             
-    return render(request,'register.html')
+    return render(request,'AddReasturant/register.html')
     
 
+def Addactivate(request, uidb64, token):
+# activating the account on email check
+    db,cmd = connection()
+     
+    q="UPDATE restaurant_user_table SET user_login_check = 'True' WHERE (username = '{0}');".format(uidb64)
+    cmd.execute(q)
+    db.commit()
+    db.close()
+    return redirect('/Dashboard')
+
+    return render(request,'AddReasturant/Dashboard.html',{'success':'Account Activated','username':uidb64})
+      
+    # else:
+     
+    #     return HttpResponse('Activation link is invalid!')
+
+def Dashboard(request):
+    return render(request,'AddReasturant/Dashboard.html')
 
 def Insertmenu(request):
 
@@ -104,7 +188,6 @@ def Insertmenu(request):
         dish_price = request.POST['dish_price']
         dish_category = request.POST['dish_category']
 
-        
         db,cmd=connection()
         q=""" INSERT INTO menu
                           (name, description,image,price,category) VALUES (%s,%s,%s,%s,%s)"""
@@ -117,7 +200,7 @@ def Insertmenu(request):
         
         for chunk in dish_image.chunks():
             f.write(chunk)
-          
+        
         f.close()
         return HttpResponse('Data is  saved')
 

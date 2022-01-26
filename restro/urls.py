@@ -11,7 +11,7 @@ urlpatterns = [
     path('login',views.login),
     url(r'^logout/(?P<username>\w+)/$',views.logout,name="logout"),
     path('activate/<uidb64>/<token>',views.activate,name='activate'),
-    path('',views.LOGIN_check,name='LOGIN_check'),
+    path('',views.LOGIN_check,name='LOGIN_check'),# landing page will start from here
     path('order<orderId>',views.order,name='order'),
     path('Menu',views.MenuItems,name='Menu'),
     path('',include('AddReasturant.urls')),
@@ -23,5 +23,6 @@ urlpatterns = [
     path('shipping',views.shipping,name='shipping'),
     path('recipe',views.recipe,name='recipe'),
     path('searchResult',views.searchResult,name='searchResult'),
+    path('Dashboard',views.Dashboard)
 
 ]
