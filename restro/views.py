@@ -59,7 +59,7 @@ def register(request):
         else:
             db,cmd = connection()
             # q="INSERT INTO restro_db.user_table (uid, username, first_name, last_name, password, email, login_check, city`) VALUES ('yure', 'hhhj', 'jhvkh', 'hkjh', '78', 'ketanup@gm.com', 'false', 'gwal');"
-            q="INSERT INTO restro_db.user_table (uid,username,first_name, last_name, password, email,login_check,city,phone) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}','{7}','{8}');".format(uid,username,firstname,lastname,password,email,login_check,city,phone)
+            q="INSERT INTO restro_db.user_table (uid,username,first_name, last_name, password, email,login_check) VALUES ('{0}','{1}' ,'{2}','{3}','{4}','{5}','{6}');".format(uid,username,firstname,lastname,password,email,login_check)
             cmd.execute(q)
             db.commit()
             db.close()
@@ -103,18 +103,21 @@ def LOGIN_check(request):
     db,cmd = connection()
     username = request.COOKIES.get('CookiesUsername')  
     password = request.COOKIES.get('CookiesPassword')
+    # print(username,password)
     
     #checking user has logout or not 
     q="select login_check from restro_db.user_table where username='{0}' and password ='{1}'".format(username,password)
     cmd.execute(q)
     user=cmd.fetchone()
     db.commit()
-    print(user)
+    # print(user)
     
-    if user[0] == 'False':
-        return render(request,'intro.html')
     if user is None:
         return render(request,'intro.html')
+
+    if user[0] == 'False':
+        return render(request,'intro.html')
+    
     if username is  None and password is None:
         return render(request,'intro.html')    
     else: 

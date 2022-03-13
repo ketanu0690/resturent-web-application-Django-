@@ -20,6 +20,7 @@ def AddReasturant(request):
 def Addlogin(request):
     db,cmd = connection()
     if request.method == 'POST':
+
         username = request.POST['username']
         password = request.POST['pass']
 
@@ -31,7 +32,7 @@ def Addlogin(request):
         
         if user is not None:
             # set login check to true
-           
+
             q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(username)
             cmd.execute(q)
             db.commit()
@@ -52,8 +53,8 @@ def Addlogin(request):
             # print(sum_quantity)
             db.close()
             
-
-            return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
+            return redirect('/Dashboard')   
+            # return render(request,'main.html',{'fname':fname,'username':username,'password':password,'MenuData':MenuData,'sum_quantity':sum_quantity})
         else:
             return render(request,'LOGIN.html',{'error':'Invalid Credentials'})
 
