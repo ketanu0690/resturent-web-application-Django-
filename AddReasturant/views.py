@@ -1,18 +1,16 @@
 from logging import error
 from django.http import HttpResponse 
 from django.shortcuts import redirect, render
-# from .cookies import *
 from restro import settings
 from django.core.mail import send_mail , EmailMessage , EmailMultiAlternatives
 from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from restro.token import gentrate_token
 from restro.pool import connection
 
-# Create your views here.
 
 def AddReasturant(request):
     return render(request, 'AddReasturant/AddReasturant.html')
@@ -162,20 +160,12 @@ def Addregister(request):
     
 
 def Addactivate(request, uidb64, token):
-# activating the account on email check
     db,cmd = connection()
-     
     q="UPDATE restaurant_user_table SET user_login_check = 'True' WHERE (username = '{0}');".format(uidb64)
     cmd.execute(q)
     db.commit()
     db.close()
     return redirect('/Dashboard')
-
-    return render(request,'AddReasturant/Dashboard.html',{'success':'Account Activated','username':uidb64})
-      
-    # else:
-     
-    #     return HttpResponse('Activation link is invalid!')
 
 def Dashboard(request):
     return render(request,'AddReasturant/Dashboard.html')
@@ -190,8 +180,7 @@ def Insertmenu(request):
         dish_category = request.POST['dish_category']
 
         db,cmd=connection()
-        q=""" INSERT INTO menu
-                          (name, description,image,price,category) VALUES (%s,%s,%s,%s,%s)"""
+        q=""" INSERT INTO menu(name, description,image,price,category) VALUES (%s,%s,%s,%s,%s)"""
         
         cmd.execute(q,(dish_name,dish_description,dish_image.name,dish_price,dish_category))
         db.commit()

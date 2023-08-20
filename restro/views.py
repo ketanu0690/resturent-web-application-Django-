@@ -1,20 +1,15 @@
 from datetime import datetime
-from distutils.log import error
-from email import message
-from django.http import HttpResponse ,JsonResponse
-from django.shortcuts import render,redirect
-import json
-from restro import settings
-from django.core.mail import send_mail , EmailMessage, EmailMultiAlternatives
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from.token import gentrate_token
+from .token import gentrate_token  # Correct the import statement
 from .pool import connection
 import requests
-
 
 def main(request):
     response = redirect('/')
@@ -241,13 +236,11 @@ def activate(request, uidb64, token):
         user = None
     
     if user is not None and gentrate_token.check_token(user[0],token):
-        # print("came here")
         db,cmd = connection()
         q="UPDATE user_table SET login_check = 'True' WHERE (username = '{0}');".format(uid)
         cmd.execute(q)
         db.commit()
         db.close()
-        # return LOGIN_check()
     
 
         return render(request,'LOGIN.html',{'success':'Account Activated','username':uid})

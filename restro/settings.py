@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from .info import *
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,7 +30,6 @@ EMAIL_PORT = EMAIL_PORT
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&6d&*586lw*io_ay^2)38u(ka$0id_^fqrrbi#j-dtfy-pyoy2'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AddReasturant',
-    'chat'
+    'chat',
+    'radioparts'
 ]
 
 MIDDLEWARE = [
@@ -64,7 +65,7 @@ ROOT_URLCONF = 'restro.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR  / 'templates'],
+        'DIRS': [BASE_DIR  / 'templates/radioparts'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,13 +84,19 @@ WSGI_APPLICATION = 'restro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -123,6 +130,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
